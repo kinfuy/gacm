@@ -10,6 +10,7 @@ import type { AddCmd, UseCmd, UserInfoJson } from '../../type/shell.type';
 export const useAction = async (name: string, cmd: UseCmd) => {
   const userList = await getFileUser(registriesPath);
   if (!userList) return;
+  if (!userList[name]) return log.error(`${name} not found`);
   let env = 'local';
   if (cmd.system) env = 'system';
   if (cmd.global) env = 'global';

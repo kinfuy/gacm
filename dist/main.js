@@ -14,7 +14,7 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 
 var name = "gacm";
-var version$1 = "0.0.3";
+var version$1 = "0.0.4";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -150,6 +150,8 @@ const useAction = async (name, cmd) => {
     const userList = await getFileUser(registriesPath);
     if (!userList)
         return;
+    if (!userList[name])
+        return log.error(`${name} not found`);
     let env = 'local';
     if (cmd.system)
         env = 'system';
