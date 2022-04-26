@@ -3,6 +3,11 @@
   "version": "0.0.3",
   "private": false,
   "description": "git account manage",
+  "keywords": [
+    "git",
+    "account",
+    "manage"
+  ],
   "license": "MIT",
   "author": "alqmc",
   "bin": {
@@ -11,11 +16,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [
-    "git",
-    "account",
-    "manage"
-  ],
   "dependencies": {
     "chalk": "4.1.2",
     "commander": "^9.1.0",

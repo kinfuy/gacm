@@ -15,74 +15,39 @@ var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 
 var name = "gacm";
 var version$1 = "0.0.3";
-var description = "gacm";
-var scripts = {
-	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
-	clear: "rimraf dist",
-	link: "npm link",
-	push: "git push gitee master && git push githup master",
-	"update:version": "sucrase-node build/utils/version.ts",
-	log: "conventional-changelog -p custom-config  -i CHANGELOG.md -s -n ./changelog-option.js"
-};
-var bin = {
-	gacm: "./dist/main.js"
-};
-var author = "alqmc";
+var description = "git account manage";
+var keywords = [
+	"git",
+	"account",
+	"manage"
+];
 var license = "MIT";
-var devDependencies = {
-	"@alqmc/eslint-config": "^0.0.3",
-	"@commitlint/cli": "^8.3.5",
-	"@commitlint/config-angular": "^8.3.4",
-	"@commitlint/config-conventional": "^16.2.1",
-	"@rollup/plugin-commonjs": "^21.0.3",
-	"@rollup/plugin-json": "^4.1.0",
-	"@rollup/plugin-node-resolve": "^13.1.3",
-	"@rollup/plugin-typescript": "^8.3.1",
-	"@types/fs-extra": "^9.0.13",
-	"@types/gulp": "^4.0.9",
-	"@types/inquirer": "^8.2.0",
-	"@types/inquirer-autocomplete-prompt": "^1.3.3",
-	"@types/node": "^17.0.21",
-	commitizen: "^4.1.2",
-	"compare-func": "^2.0.0",
-	"conventional-changelog-cli": "^2.0.34",
-	"conventional-changelog-custom-config": "^0.3.1",
-	"cz-conventional-changelog": "^3.2.0",
-	"fs-extra": "^10.1.0",
-	gulp: "^4.0.2",
-	husky: "^4.2.5",
-	"lint-staged": "^10.3.0",
-	prettier: "^2.6.2",
-	rimraf: "^3.0.2",
-	rollup: "^2.70.1",
-	"rollup-plugin-typescript2": "^0.31.2",
-	sucrase: "^3.20.3",
-	tslib: "^2.4.0",
-	typescript: "^4.6.3"
+var author = "alqmc";
+var bin = {
+	gacm: "main.js"
+};
+var publishConfig = {
+	access: "public"
 };
 var dependencies = {
 	chalk: "4.1.2",
 	commander: "^9.1.0",
 	figlet: "^1.5.2",
 	inquirer: "^8.2.1",
-	ora: "^5.1.0"
-};
-var config = {
-	commitizen: {
-		path: "./node_modules/cz-conventional-changelog"
-	}
+	ora: "^5.1.0",
+	shelljs: "^0.8.5"
 };
 var pkg = {
 	name: name,
 	version: version$1,
+	"private": false,
 	description: description,
-	scripts: scripts,
-	bin: bin,
-	author: author,
+	keywords: keywords,
 	license: license,
-	devDependencies: devDependencies,
-	dependencies: dependencies,
-	config: config
+	author: author,
+	bin: bin,
+	publishConfig: publishConfig,
+	dependencies: dependencies
 };
 
 /* eslint-disable no-console */
