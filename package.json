@@ -13,6 +13,9 @@
   "bin": {
     "gacm": "./dist/main.js"
   },
+  "repository": {
+    "url": "https://github.com/alqmc/gacm.git"
+  },
   "author": "alqmc",
   "license": "MIT",
   "devDependencies": {

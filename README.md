@@ -21,9 +21,16 @@
 
 just like nvm
 
-```
+```shell
 gacm ls
 
-gfl use xxx
+gacm use xxx ---local
+
+gacm use xxx ---global
+
+gacm add --name xxx --email xxx
+
+gacm delate user
+
 ```
 
