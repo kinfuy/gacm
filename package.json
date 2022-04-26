@@ -1,6 +1,6 @@
 {
   "name": "gacm",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "gacm",
   "scripts": {
     "build": "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -19,6 +19,7 @@
     "@alqmc/eslint-config": "^0.0.3",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-angular": "^8.3.4",
+    "@commitlint/config-conventional": "^16.2.1",
     "@rollup/plugin-commonjs": "^21.0.3",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.1.3",

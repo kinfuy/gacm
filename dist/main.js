@@ -14,7 +14,7 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 
 var name = "gacm";
-var version$1 = "0.0.1";
+var version$1 = "0.0.3";
 var description = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -33,6 +33,7 @@ var devDependencies = {
 	"@alqmc/eslint-config": "^0.0.3",
 	"@commitlint/cli": "^8.3.5",
 	"@commitlint/config-angular": "^8.3.4",
+	"@commitlint/config-conventional": "^16.2.1",
 	"@rollup/plugin-commonjs": "^21.0.3",
 	"@rollup/plugin-json": "^4.1.0",
 	"@rollup/plugin-node-resolve": "^13.1.3",
@@ -197,7 +198,6 @@ const useAction = async (name, cmd) => {
 };
 const lsAction = async () => {
     const userList = await getFileUser(registriesPath);
-    console.log(userList);
     if (!userList)
         return log.info('no user');
     if (Object.keys(userList).length === 0)
