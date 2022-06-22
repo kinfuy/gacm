@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-import chalk from 'chalk';
+import { white } from 'kolorist';
 
 export const geneDashLine = (message: string, length: number) => {
   const finalMessage = new Array(Math.max(2, length - message.length + 2)).join(
     '-'
   );
-  return padding(chalk.dim(finalMessage));
+  return padding(white(finalMessage));
 };
 
 export const padding = (message = '', before = 1, after = 1) => {

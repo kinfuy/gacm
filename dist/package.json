@@ -1,6 +1,6 @@
 {
   "name": "gacm",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": false,
   "description": "git account manage",
   "keywords": [
@@ -17,11 +17,9 @@
     "access": "public"
   },
   "dependencies": {
-    "chalk": "4.1.2",
-    "commander": "^9.1.0",
-    "figlet": "^1.5.2",
-    "inquirer": "^8.2.1",
-    "ora": "^5.1.0",
-    "shelljs": "^0.8.5"
+    "kolorist": "^1.5.1",
+    "minimist": "^1.2.6",
+    "prompts": "^2.4.2",
+    "execa": "5.0.1"
   }
 }

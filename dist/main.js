@@ -2,19 +2,20 @@
 'use strict';
 
 var commander = require('commander');
-var util = require('util');
-var chalk = require('chalk');
+var chalk = require('kolorist');
 var path = require('path');
 var fs = require('fs');
 var child_process = require('child_process');
 var process$1 = require('process');
+var execa = require('execa');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
+var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name = "gacm";
-var version$1 = "0.0.4";
+var version$1 = "0.0.5";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -30,12 +31,10 @@ var publishConfig = {
 	access: "public"
 };
 var dependencies = {
-	chalk: "4.1.2",
-	commander: "^9.1.0",
-	figlet: "^1.5.2",
-	inquirer: "^8.2.1",
-	ora: "^5.1.0",
-	shelljs: "^0.8.5"
+	kolorist: "^1.5.1",
+	minimist: "^1.2.6",
+	prompts: "^2.4.2",
+	execa: "5.0.1"
 };
 var pkg = {
 	name: name,
@@ -50,12 +49,11 @@ var pkg = {
 	dependencies: dependencies
 };
 
-/* eslint-disable no-console */
-const { green, red, yellowBright, blueBright } = chalk__default["default"];
+const { green, red, lightYellow, blue } = chalk__default["default"];
 const success = (msg) => console.log(green(msg));
 const error = (msg) => console.log(red(msg));
-const warning = (msg) => console.log(yellowBright(msg));
-const info = (msg) => console.log(blueBright(msg));
+const warning = (msg) => console.log(lightYellow(msg));
+const info = (msg) => console.log(blue(msg));
 const log = {
     success,
     error,
@@ -63,11 +61,8 @@ const log = {
     info,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const figlet = util.promisify(require('figlet'));
 const version = async () => {
-    const info = await figlet(`${pkg.name}`);
-    log.success(`${info}  ${pkg.version}`);
+    log.success(`${pkg.version}`);
 };
 
 const baseAction = async (cmd) => {
@@ -106,7 +101,6 @@ async function writeFileUser(dir, data) {
     });
 }
 
-// run shell
 const run = (command, dir = process$1.cwd()) => {
     const [cmd, ...args] = command.split(' ');
     return new Promise((resolve, reject) => {
@@ -126,11 +120,15 @@ const run = (command, dir = process$1.cwd()) => {
         process.on('exit', processExit);
     });
 };
+const execCommand = async (cmd, args) => {
+    const res = await execa__default["default"](cmd, args);
+    return res.stdout.trim();
+};
 
 /* eslint-disable no-console */
 const geneDashLine = (message, length) => {
     const finalMessage = new Array(Math.max(2, length - message.length + 2)).join('-');
-    return padding(chalk__default["default"].dim(finalMessage));
+    return padding(chalk.white(finalMessage));
 };
 const padding = (message = '', before = 1, after = 1) => {
     return (new Array(before).fill(' ').join(' ') +
@@ -172,9 +170,15 @@ const lsAction = async () => {
     const keys = Object.keys(userList);
     const length = Math.max(...keys.map((key) => key.length)) + 3;
     const prefix = '  ';
+    const currectUser = await execCommand('git', ['config', 'user.name']);
     const messages = keys.map((key) => {
         const registry = userList[key];
-        return prefix + registry.name + geneDashLine(key, length) + registry.email;
+        const currect = registry.name === currectUser ? `${chalk.green('*')}` : '';
+        return (prefix +
+            currect +
+            registry.name +
+            geneDashLine(key, length) +
+            registry.email);
     });
     printMessages(messages);
 };

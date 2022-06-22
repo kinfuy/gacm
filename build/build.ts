@@ -8,6 +8,7 @@ import { dependencies } from '../package.json';
 const external = Object.keys(dependencies || '');
 const globals = external.reduce((prev, current) => {
   const newPrev = prev;
+  //@ts-ignore
   newPrev[current] = current;
   return newPrev;
 }, {});

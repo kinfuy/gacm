@@ -1,6 +1,7 @@
 import { spawn } from 'child_process';
 import { cwd } from 'process';
-// run shell
+import execa from 'execa';
+
 export const run = (command: string, dir: string = cwd()) => {
   const [cmd, ...args] = command.split(' ');
   return new Promise<void>((resolve, reject) => {
@@ -10,6 +11,7 @@ export const run = (command: string, dir: string = cwd()) => {
       shell: process.platform === 'win32',
     });
     const processExit = () => app.kill('SIGHUP');
+
     app.on('close', (code) => {
       process.removeListener('exit', processExit);
       if (code === 0) resolve();
@@ -18,4 +20,8 @@ export const run = (command: string, dir: string = cwd()) => {
     });
     process.on('exit', processExit);
   });
+};
+export const execCommand = async (cmd: string, args: string[]) => {
+  const res = await execa(cmd, args);
+  return res.stdout.trim();
 };

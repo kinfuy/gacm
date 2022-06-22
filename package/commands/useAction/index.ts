@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 import { resolve } from 'path';
+import { green } from 'kolorist';
 import { outputPath, registriesPath } from '../../config/path';
 import { getFileUser, writeFileUser } from '../../utils/getUserList';
-import { run } from '../../utils/shell';
+import { execCommand, run } from '../../utils/shell';
 import { geneDashLine, printMessages } from '../../utils/tools';
 import { log } from '../../utils/log';
 import type { AddCmd, UseCmd, UserInfoJson } from '../../type/shell.type';
@@ -27,10 +28,19 @@ export const lsAction = async () => {
   const keys = Object.keys(userList);
   const length = Math.max(...keys.map((key) => key.length)) + 3;
   const prefix = '  ';
+  const currectUser = await execCommand('git', ['config', 'user.name']);
   const messages = keys.map((key) => {
     const registry = userList[key];
-    return prefix + registry.name + geneDashLine(key, length) + registry.email;
+    const currect = registry.name === currectUser ? `${green('*')}` : '';
+    return (
+      prefix +
+      currect +
+      registry.name +
+      geneDashLine(key, length) +
+      registry.email
+    );
   });
+
   printMessages(messages);
 };
 
