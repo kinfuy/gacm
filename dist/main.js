@@ -15,7 +15,7 @@ var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name = "gacm";
-var version$1 = "0.0.5";
+var version$1 = "0.0.6";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -31,10 +31,10 @@ var publishConfig = {
 	access: "public"
 };
 var dependencies = {
+	commander: "^2.4.2",
+	execa: "5.0.1",
 	kolorist: "^1.5.1",
-	minimist: "^1.2.6",
-	prompts: "^2.4.2",
-	execa: "5.0.1"
+	minimist: "^1.2.6"
 };
 var pkg = {
 	name: name,

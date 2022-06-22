@@ -1,6 +1,6 @@
 {
   "name": "gacm",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "gacm",
   "scripts": {
     "build": "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
