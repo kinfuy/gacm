@@ -55,174 +55,142 @@ const error = (msg) => console.log(red(msg));
 const warning = (msg) => console.log(lightYellow(msg));
 const info = (msg) => console.log(blue(msg));
 const log = {
-    success,
-    error,
-    warning,
-    info,
+  success,
+  error,
+  warning,
+  info
 };
 
 const version = async () => {
-    log.success(`${pkg.version}`);
+  log.success(`${pkg.version}`);
 };
 
 const baseAction = async (cmd) => {
-    if (cmd.version)
-        await version();
+  if (cmd.version)
+    await version();
 };
 
-// 基于打包后的路径 dist
 const rootPath = __dirname;
 const outputPath = __dirname;
-path.resolve(rootPath, 'package');
-const registriesPath = path.resolve(outputPath, 'registries.json');
+path.resolve(rootPath, "package");
+const registriesPath = path.resolve(outputPath, "registries.json");
 
 const { readFile, writeFile } = fs.promises;
-/**
- * 获取用户
- * @param path
- * @returns
- */
 const getFileUser = async (rootPath) => {
-    const fileBuffer = await readFile(rootPath, 'utf-8');
-    const userList = fileBuffer
-        ? JSON.parse(fileBuffer.toString())
-        : null;
-    return userList;
+  const fileBuffer = await readFile(rootPath, "utf-8");
+  const userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
+  return userList;
 };
-/**
- * 将shell写入文件
- * @param dir
- * @param data
- */
 async function writeFileUser(dir, data) {
-    writeFile(dir, JSON.stringify(data, null, 4)).catch((error) => {
-        log.error(error);
-        process.exit(0);
-    });
+  writeFile(dir, JSON.stringify(data, null, 4)).catch((error) => {
+    log.error(error);
+    process.exit(0);
+  });
 }
 
 const run = (command, dir = process$1.cwd()) => {
-    const [cmd, ...args] = command.split(' ');
-    return new Promise((resolve, reject) => {
-        const app = child_process.spawn(cmd, args, {
-            cwd: dir,
-            stdio: 'inherit',
-            shell: process.platform === 'win32',
-        });
-        const processExit = () => app.kill('SIGHUP');
-        app.on('close', (code) => {
-            process.removeListener('exit', processExit);
-            if (code === 0)
-                resolve();
-            else
-                reject(new Error(`command failed: \n command:${cmd} \n code:${code}`));
-        });
-        process.on('exit', processExit);
+  const [cmd, ...args] = command.split(" ");
+  return new Promise((resolve, reject) => {
+    const app = child_process.spawn(cmd, args, {
+      cwd: dir,
+      stdio: "inherit",
+      shell: process.platform === "win32"
     });
+    const processExit = () => app.kill("SIGHUP");
+    app.on("close", (code) => {
+      process.removeListener("exit", processExit);
+      if (code === 0)
+        resolve();
+      else
+        reject(new Error(`command failed: 
+ command:${cmd} 
+ code:${code}`));
+    });
+    process.on("exit", processExit);
+  });
 };
 const execCommand = async (cmd, args) => {
-    const res = await execa__default["default"](cmd, args);
-    return res.stdout.trim();
+  const res = await execa__default["default"](cmd, args);
+  return res.stdout.trim();
 };
 
-/* eslint-disable no-console */
 const geneDashLine = (message, length) => {
-    const finalMessage = new Array(Math.max(2, length - message.length + 2)).join('-');
-    return padding(chalk.white(finalMessage));
+  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
+  return padding(chalk.white(finalMessage));
 };
-const padding = (message = '', before = 1, after = 1) => {
-    return (new Array(before).fill(' ').join(' ') +
-        message +
-        new Array(after).fill(' ').join(' '));
+const padding = (message = "", before = 1, after = 1) => {
+  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
 };
 const printMessages = (messages) => {
-    console.log('\n');
-    for (const message of messages) {
-        console.log(message);
-    }
-    console.log('\n');
+  console.log("\n");
+  for (const message of messages) {
+    console.log(message);
+  }
+  console.log("\n");
 };
 
-/* eslint-disable no-console */
 const useAction = async (name, cmd) => {
-    const userList = await getFileUser(registriesPath);
-    if (!userList)
-        return;
-    if (!userList[name])
-        return log.error(`${name} not found`);
-    let env = 'local';
-    if (cmd.system)
-        env = 'system';
-    if (cmd.global)
-        env = 'global';
-    if (cmd.local)
-        env = 'local';
-    await run(`git config --${env} user.name ${userList[name].name}`);
-    await run(`git config --${env} user.email ${userList[name].email}`);
-    log.success(`\n   git user changed [${env}]:${userList[name].name}\n`);
+  const userList = await getFileUser(registriesPath);
+  if (!userList)
+    return;
+  if (!userList[name])
+    return log.error(`${name} not found`);
+  let env = "local";
+  if (cmd.system)
+    env = "system";
+  if (cmd.global)
+    env = "global";
+  if (cmd.local)
+    env = "local";
+  await run(`git config --${env} user.name ${userList[name].name}`);
+  await run(`git config --${env} user.email ${userList[name].email}`);
+  log.success(`
+   git user changed [${env}]:${userList[name].name}
+`);
 };
 const lsAction = async () => {
-    const userList = await getFileUser(registriesPath);
-    if (!userList)
-        return log.info('no user');
-    if (Object.keys(userList).length === 0)
-        return log.info('no user');
-    const keys = Object.keys(userList);
-    const length = Math.max(...keys.map((key) => key.length)) + 3;
-    const prefix = '  ';
-    const currectUser = await execCommand('git', ['config', 'user.name']);
-    const messages = keys.map((key) => {
-        const registry = userList[key];
-        const currect = registry.name === currectUser ? `${chalk.green('*')}` : '';
-        return (prefix +
-            currect +
-            registry.name +
-            geneDashLine(key, length) +
-            registry.email);
-    });
-    printMessages(messages);
+  const userList = await getFileUser(registriesPath);
+  if (!userList)
+    return log.info("no user");
+  if (Object.keys(userList).length === 0)
+    return log.info("no user");
+  const keys = Object.keys(userList);
+  const length = Math.max(...keys.map((key) => key.length)) + 3;
+  const prefix = "  ";
+  const currectUser = await execCommand("git", ["config", "user.name"]);
+  const messages = keys.map((key) => {
+    const registry = userList[key];
+    const currect = registry.name === currectUser ? `${chalk.green("*")}` : "";
+    return prefix + currect + registry.name + geneDashLine(key, length) + registry.email;
+  });
+  printMessages(messages);
 };
 const addAction = async (cmd) => {
-    let userList = await getFileUser(registriesPath);
-    if (!userList)
-        userList = {};
-    userList[cmd.name] = {
-        name: cmd.name,
-        email: cmd.email,
-    };
-    await writeFileUser(path.resolve(outputPath, `registries.json`), userList);
-    log.success(`[add]: ${cmd.name}`);
+  let userList = await getFileUser(registriesPath);
+  if (!userList)
+    userList = {};
+  userList[cmd.name] = {
+    name: cmd.name,
+    email: cmd.email
+  };
+  await writeFileUser(path.resolve(outputPath, `registries.json`), userList);
+  log.success(`[add]: ${cmd.name}`);
 };
 const deleteAction = async (name) => {
-    const userList = await getFileUser(registriesPath);
-    if (!userList)
-        return log.error(`no user`);
-    if (!userList[name])
-        return log.error(`${name} not found`);
-    delete userList[name];
-    await writeFileUser(path.resolve(outputPath, `registries.json`), userList);
-    log.success(`[delete]: ${name}`);
+  const userList = await getFileUser(registriesPath);
+  if (!userList)
+    return log.error(`no user`);
+  if (!userList[name])
+    return log.error(`${name} not found`);
+  delete userList[name];
+  await writeFileUser(path.resolve(outputPath, `registries.json`), userList);
+  log.success(`[delete]: ${name}`);
 };
 
 const program = new commander.Command();
-program
-    .option('-v, --version', '查看当前版本')
-    .usage('command <option>')
-    .description('template-node-cli')
-    .action(baseAction);
-program.command('ls').description('当前用户列表').action(lsAction);
-program
-    .command('use <name>')
-    .option('-l, --local', '当前用户')
-    .option('-g, --global', '全局用户')
-    .option('-s, --system', '系统用户')
-    .description('切换用户')
-    .action(useAction);
-program
-    .command('add')
-    .option('-n, --name <name>', '当前用户')
-    .option('-e, --email <email>', '全局用户')
-    .description('添加用户')
-    .action(addAction);
-program.command('delete <name>').description('删除用户').action(deleteAction);
+program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("template-node-cli").action(baseAction);
+program.command("ls").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(lsAction);
+program.command("use <name>").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").description("\u5207\u6362\u7528\u6237").action(useAction);
+program.command("add").option("-n, --name <name>", "\u5F53\u524D\u7528\u6237").option("-e, --email <email>", "\u5168\u5C40\u7528\u6237").description("\u6DFB\u52A0\u7528\u6237").action(addAction);
+program.command("delete <name>").description("\u5220\u9664\u7528\u6237").action(deleteAction);
 program.parse(process.argv);
