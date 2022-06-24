@@ -1,12 +1,12 @@
 {
   "name": "gacm",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "gacm",
   "scripts": {
     "build": "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
     "clear": "rimraf dist",
     "link": "npm link",
-    "push": "git push gitee dev && git push github dev",
+    "push": "git push gitee master && git push github master",
     "update:version": "sucrase-node build/utils/version.ts",
     "log": "conventional-changelog -p custom-config  -i CHANGELOG.md -s -n ./changelog-option.js",
     "prepare": "husky install"

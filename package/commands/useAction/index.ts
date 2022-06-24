@@ -29,6 +29,19 @@ export const lsAction = async () => {
   const length = Math.max(...keys.map((key) => key.length)) + 3;
   const prefix = '  ';
   const currectUser = await execCommand('git', ['config', 'user.name']);
+  const currectEmail = await execCommand('git', ['config', 'user.email']);
+
+  if (!keys.includes(currectUser) && currectUser && currectEmail) {
+    // 默认添加本地账户
+    await insertUser(currectUser, currectEmail);
+    log.success(`[found new user]: ${currectUser}`);
+    keys.push(currectUser);
+    userList[currectUser] = {
+      name: currectUser,
+      email: currectEmail,
+    };
+  }
+
   const messages = keys.map((key) => {
     const registry = userList[key];
     const currect = registry.name === currectUser ? `${green('*')}` : '';
@@ -45,14 +58,10 @@ export const lsAction = async () => {
 };
 
 export const addAction = async (cmd: AddCmd) => {
-  let userList = await getFileUser(registriesPath);
-  if (!userList) userList = {} as UserInfoJson;
-  userList[cmd.name] = {
-    name: cmd.name,
-    email: cmd.email,
-  };
-  await writeFileUser(resolve(outputPath, `registries.json`), userList);
-  log.success(`[add]: ${cmd.name}`);
+  if (cmd.name && cmd.email) {
+    await insertUser(cmd.name, cmd.email);
+    log.success(`[add]: ${cmd.name}`);
+  }
 };
 
 export const deleteAction = async (name: string) => {
@@ -62,4 +71,15 @@ export const deleteAction = async (name: string) => {
   delete userList[name];
   await writeFileUser(resolve(outputPath, `registries.json`), userList);
   log.success(`[delete]: ${name}`);
+};
+
+// 插入用户 同名覆盖更新
+export const insertUser = async (name: string, email: string) => {
+  let userList = await getFileUser(registriesPath);
+  if (!userList) userList = {} as UserInfoJson;
+  userList[name] = {
+    name,
+    email,
+  };
+  await writeFileUser(resolve(outputPath, `registries.json`), userList);
 };

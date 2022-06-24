@@ -15,7 +15,7 @@ var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name = "gacm";
-var version$1 = "0.0.6";
+var version$1 = "0.0.7";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -158,6 +158,16 @@ const lsAction = async () => {
   const length = Math.max(...keys.map((key) => key.length)) + 3;
   const prefix = "  ";
   const currectUser = await execCommand("git", ["config", "user.name"]);
+  const currectEmail = await execCommand("git", ["config", "user.email"]);
+  if (!keys.includes(currectUser) && currectUser && currectEmail) {
+    await insertUser(currectUser, currectEmail);
+    log.success(`[found new user]: ${currectUser}`);
+    keys.push(currectUser);
+    userList[currectUser] = {
+      name: currectUser,
+      email: currectEmail
+    };
+  }
   const messages = keys.map((key) => {
     const registry = userList[key];
     const currect = registry.name === currectUser ? `${chalk.green("*")}` : "";
@@ -166,15 +176,10 @@ const lsAction = async () => {
   printMessages(messages);
 };
 const addAction = async (cmd) => {
-  let userList = await getFileUser(registriesPath);
-  if (!userList)
-    userList = {};
-  userList[cmd.name] = {
-    name: cmd.name,
-    email: cmd.email
-  };
-  await writeFileUser(path.resolve(outputPath, `registries.json`), userList);
-  log.success(`[add]: ${cmd.name}`);
+  if (cmd.name && cmd.email) {
+    await insertUser(cmd.name, cmd.email);
+    log.success(`[add]: ${cmd.name}`);
+  }
 };
 const deleteAction = async (name) => {
   const userList = await getFileUser(registriesPath);
@@ -185,6 +190,16 @@ const deleteAction = async (name) => {
   delete userList[name];
   await writeFileUser(path.resolve(outputPath, `registries.json`), userList);
   log.success(`[delete]: ${name}`);
+};
+const insertUser = async (name, email) => {
+  let userList = await getFileUser(registriesPath);
+  if (!userList)
+    userList = {};
+  userList[name] = {
+    name,
+    email
+  };
+  await writeFileUser(path.resolve(outputPath, `registries.json`), userList);
 };
 
 const program = new commander.Command();

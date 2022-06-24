@@ -22,7 +22,12 @@
 
 ### Features
 
-- ⚡️ cli 工具
+- ✨ git账户无痛切换
+
+- ⚡️ 简便的cli 工具
+
+- 🚀 极简的操作方式
+
 
 ### Getting Started
 
@@ -45,7 +50,7 @@ gacm delate user
 
 ### License
 
-MIT License © 2021 [阿乐去买菜（alqmc）](https://github.com/alqmc)
+MIT License © 2022 [阿乐去买菜（alqmc）](https://github.com/alqmc)
 
 
 
