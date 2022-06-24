@@ -15,7 +15,7 @@ var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name = "gacm";
-var version$1 = "0.0.7";
+var version$1 = "0.0.8";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -149,25 +149,24 @@ const useAction = async (name, cmd) => {
 `);
 };
 const lsAction = async () => {
-  const userList = await getFileUser(registriesPath);
-  if (!userList)
-    return log.info("no user");
-  if (Object.keys(userList).length === 0)
-    return log.info("no user");
-  const keys = Object.keys(userList);
-  const length = Math.max(...keys.map((key) => key.length)) + 3;
-  const prefix = "  ";
+  const userList = await getFileUser(registriesPath) || {};
   const currectUser = await execCommand("git", ["config", "user.name"]);
   const currectEmail = await execCommand("git", ["config", "user.email"]);
+  const keys = Object.keys(userList) || [];
+  if (keys.length === 0 && (!currectUser || !currectEmail)) {
+    return log.info("no user");
+  }
   if (!keys.includes(currectUser) && currectUser && currectEmail) {
     await insertUser(currectUser, currectEmail);
-    log.success(`[found new user]: ${currectUser}`);
+    log.info(`[found new user]: ${currectUser}`);
     keys.push(currectUser);
     userList[currectUser] = {
       name: currectUser,
       email: currectEmail
     };
   }
+  const length = Math.max(...keys.map((key) => key.length)) + 3;
+  const prefix = "  ";
   const messages = keys.map((key) => {
     const registry = userList[key];
     const currect = registry.name === currectUser ? `${chalk.green("*")}` : "";

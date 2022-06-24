@@ -22,25 +22,28 @@ export const useAction = async (name: string, cmd: UseCmd) => {
 };
 
 export const lsAction = async () => {
-  const userList = await getFileUser(registriesPath);
-  if (!userList) return log.info('no user');
-  if (Object.keys(userList).length === 0) return log.info('no user');
-  const keys = Object.keys(userList);
-  const length = Math.max(...keys.map((key) => key.length)) + 3;
-  const prefix = '  ';
+  const userList = (await getFileUser(registriesPath)) || ({} as UserInfoJson);
   const currectUser = await execCommand('git', ['config', 'user.name']);
   const currectEmail = await execCommand('git', ['config', 'user.email']);
+  const keys = Object.keys(userList) || [];
+
+  if (keys.length === 0 && (!currectUser || !currectEmail)) {
+    return log.info('no user');
+  }
 
   if (!keys.includes(currectUser) && currectUser && currectEmail) {
     // 默认添加本地账户
     await insertUser(currectUser, currectEmail);
-    log.success(`[found new user]: ${currectUser}`);
+    log.info(`[found new user]: ${currectUser}`);
     keys.push(currectUser);
     userList[currectUser] = {
       name: currectUser,
       email: currectEmail,
     };
   }
+
+  const length = Math.max(...keys.map((key) => key.length)) + 3;
+  const prefix = '  ';
 
   const messages = keys.map((key) => {
     const registry = userList[key];
