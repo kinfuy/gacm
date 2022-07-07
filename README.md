@@ -29,8 +29,18 @@
 - 😊 gacm ls 自动添加本地git账户
 
 
-
 ### Getting Started
+
+```
+pnpm add gacm -g
+
+yarn add gacm -g
+
+npm install gacm -g
+
+```
+
+### Usage
 
 
 ```shell
