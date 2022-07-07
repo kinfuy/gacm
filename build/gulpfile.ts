@@ -6,6 +6,6 @@ export default series(
   withTask('update:version', () => run('pnpm run update:version')),
   withTask('clear', () => run('pnpm run clear')),
   buildBundle,
-  copyFiles
-  // withTask('clear', () => run('pnpm run link'))
+  copyFiles,
+  withTask('link', () => run('pnpm run link'))
 );

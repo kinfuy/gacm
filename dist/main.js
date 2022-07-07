@@ -2,7 +2,7 @@
 'use strict';
 
 var commander = require('commander');
-var chalk = require('kolorist');
+var kolorist = require('kolorist');
 var path = require('path');
 var fs = require('fs');
 var child_process = require('child_process');
@@ -11,11 +11,10 @@ var execa = require('execa');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name = "gacm";
-var version$1 = "0.0.8";
+var version$1 = "0.0.7";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -31,7 +30,7 @@ var publishConfig = {
 	access: "public"
 };
 var dependencies = {
-	commander: "^2.4.2",
+	commander: "^9.3.0",
 	execa: "5.0.1",
 	kolorist: "^1.5.1",
 	minimist: "^1.2.6"
@@ -49,11 +48,10 @@ var pkg = {
 	dependencies: dependencies
 };
 
-const { green, red, lightYellow, blue } = chalk__default["default"];
-const success = (msg) => console.log(green(msg));
-const error = (msg) => console.log(red(msg));
-const warning = (msg) => console.log(lightYellow(msg));
-const info = (msg) => console.log(blue(msg));
+const success = (msg) => console.log(kolorist.green(msg));
+const error = (msg) => console.log(kolorist.red(msg));
+const warning = (msg) => console.log(kolorist.lightYellow(msg));
+const info = (msg) => console.log(kolorist.blue(msg));
 const log = {
   success,
   error,
@@ -116,7 +114,7 @@ const execCommand = async (cmd, args) => {
 
 const geneDashLine = (message, length) => {
   const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
-  return padding(chalk.white(finalMessage));
+  return padding(kolorist.white(finalMessage));
 };
 const padding = (message = "", before = 1, after = 1) => {
   return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
@@ -169,7 +167,7 @@ const lsAction = async () => {
   const prefix = "  ";
   const messages = keys.map((key) => {
     const registry = userList[key];
-    const currect = registry.name === currectUser ? `${chalk.green("*")}` : "";
+    const currect = registry.name === currectUser ? `${kolorist.green("*")}` : "";
     return prefix + currect + registry.name + geneDashLine(key, length) + registry.email;
   });
   printMessages(messages);
@@ -202,7 +200,7 @@ const insertUser = async (name, email) => {
 };
 
 const program = new commander.Command();
-program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("template-node-cli").action(baseAction);
+program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("\u67E5\u770B\u5F53\u524D\u7248\u672C").action(baseAction);
 program.command("ls").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(lsAction);
 program.command("use <name>").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").description("\u5207\u6362\u7528\u6237").action(useAction);
 program.command("add").option("-n, --name <name>", "\u5F53\u524D\u7528\u6237").option("-e, --email <email>", "\u5168\u5C40\u7528\u6237").description("\u6DFB\u52A0\u7528\u6237").action(addAction);

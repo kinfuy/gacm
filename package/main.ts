@@ -11,7 +11,7 @@ const program = new Command();
 program
   .option('-v, --version', '查看当前版本')
   .usage('command <option>')
-  .description('template-node-cli')
+  .description('查看当前版本')
   .action(baseAction);
 
 program.command('ls').description('当前用户列表').action(lsAction);

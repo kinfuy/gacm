@@ -1,11 +1,11 @@
 {
   "name": "gacm",
-  "version": "0.0.8",
+  "version": "0.0.7",
   "description": "gacm",
   "scripts": {
     "build": "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
     "clear": "rimraf dist",
-    "link": "npm link",
+    "link": "pnpm link --global",
     "push": "git push gitee master && git push github master",
     "update:version": "sucrase-node build/utils/version.ts",
     "log": "conventional-changelog -p custom-config  -i CHANGELOG.md -s -n ./changelog-option.js",
@@ -51,7 +51,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "commander": "^2.4.2",
+    "commander": "^9.3.0",
     "execa": "5.0.1",
     "kolorist": "^1.5.1",
     "minimist": "^1.2.6"

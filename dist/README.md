@@ -28,6 +28,9 @@
 
 - 🚀 极简的操作方式
 
+- 😊 gacm ls 自动添加本地git账户
+
+
 
 ### Getting Started
 
@@ -47,6 +50,10 @@ gacm add --name xxx --email xxx
 gacm delate user
 
 ```
+
+### Care
+
+- 💀 更新会丢失用户
 
 ### License
 

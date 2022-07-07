@@ -22,11 +22,9 @@
 
 ### Features
 
-- ✨ git账户无痛切换
+- ✨ git账户无缝切换
 
-- ⚡️ 简便的cli 工具
-
-- 🚀 极简的操作方式
+- 🚀 极简的操作方式，just like nvm
 
 - 😊 gacm ls 自动添加本地git账户
 
@@ -50,11 +48,6 @@ gacm add --name xxx --email xxx
 gacm delate user
 
 ```
-
-### Care
-
-- 💀 更新会丢失用户
-
 ### License
 
 MIT License © 2022 [阿乐去买菜（alqmc）](https://github.com/alqmc)
