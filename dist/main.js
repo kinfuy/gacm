@@ -14,7 +14,7 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name = "gacm";
-var version$1 = "0.0.7";
+var version$1 = "1.0.0";
 var description = "git account manage";
 var keywords = [
 	"git",

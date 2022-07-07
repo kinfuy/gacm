@@ -31,7 +31,9 @@ module.exports = {
         commit.type = '🔧 Continuous Integration | CI 配置';
       } else if (commit.type === 'chore') {
         commit.type = '🎫 Chores | 其他更新';
-      } else {
+      }  else if (commit.type === 'release') {
+        commit.type = '🏆 release | 版本发布';
+      }else {
         commit.type = '😞 Nonstandard | 不规范的commit';
       }
 
