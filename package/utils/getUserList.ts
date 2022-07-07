@@ -1,4 +1,4 @@
-import { promises } from 'fs';
+import { existsSync, promises } from 'fs';
 import { log } from './log';
 import type { UserInfoJson } from '../type/shell.type';
 const { readFile, writeFile } = promises;
@@ -9,11 +9,14 @@ const { readFile, writeFile } = promises;
  * @returns
  */
 export const getFileUser = async (rootPath: string) => {
-  const fileBuffer = await readFile(rootPath, 'utf-8');
-  const userList = fileBuffer
-    ? (JSON.parse(fileBuffer.toString()) as UserInfoJson)
-    : null;
-  return userList;
+  if (existsSync(rootPath)) {
+    const fileBuffer = await readFile(rootPath, 'utf-8');
+    const userList = fileBuffer
+      ? (JSON.parse(fileBuffer.toString()) as UserInfoJson)
+      : null;
+    return userList;
+  }
+  return null;
 };
 
 /**

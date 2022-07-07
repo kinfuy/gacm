@@ -1,7 +1,5 @@
-/* eslint-disable no-console */
-import { resolve } from 'path';
 import { green } from 'kolorist';
-import { outputPath, registriesPath } from '../../config/path';
+import { registriesPath } from '../../config/path';
 import { getFileUser, writeFileUser } from '../../utils/getUserList';
 import { execCommand, run } from '../../utils/shell';
 import { geneDashLine, printMessages } from '../../utils/tools';
@@ -72,7 +70,7 @@ export const deleteAction = async (name: string) => {
   if (!userList) return log.error(`no user`);
   if (!userList[name]) return log.error(`${name} not found`);
   delete userList[name];
-  await writeFileUser(resolve(outputPath, `registries.json`), userList);
+  await writeFileUser(registriesPath, userList);
   log.success(`[delete]: ${name}`);
 };
 
@@ -84,5 +82,5 @@ export const insertUser = async (name: string, email: string) => {
     name,
     email,
   };
-  await writeFileUser(resolve(outputPath, `registries.json`), userList);
+  await writeFileUser(registriesPath, userList);
 };

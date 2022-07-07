@@ -14,7 +14,7 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name = "gacm";
-var version$1 = "1.0.0";
+var version$1 = "1.0.1";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -69,15 +69,19 @@ const baseAction = async (cmd) => {
 };
 
 const rootPath = __dirname;
-const outputPath = __dirname;
+__dirname;
 path.resolve(rootPath, "package");
-const registriesPath = path.resolve(outputPath, "registries.json");
+const HOME = process.env[process.platform === "win32" ? "USERPROFILE" : "HOME"] || "";
+const registriesPath = path.join(HOME, ".gacmrc");
 
 const { readFile, writeFile } = fs.promises;
 const getFileUser = async (rootPath) => {
-  const fileBuffer = await readFile(rootPath, "utf-8");
-  const userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
-  return userList;
+  if (fs.existsSync(rootPath)) {
+    const fileBuffer = await readFile(rootPath, "utf-8");
+    const userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
+    return userList;
+  }
+  return null;
 };
 async function writeFileUser(dir, data) {
   writeFile(dir, JSON.stringify(data, null, 4)).catch((error) => {
@@ -185,7 +189,7 @@ const deleteAction = async (name) => {
   if (!userList[name])
     return log.error(`${name} not found`);
   delete userList[name];
-  await writeFileUser(path.resolve(outputPath, `registries.json`), userList);
+  await writeFileUser(registriesPath, userList);
   log.success(`[delete]: ${name}`);
 };
 const insertUser = async (name, email) => {
@@ -196,7 +200,7 @@ const insertUser = async (name, email) => {
     name,
     email
   };
-  await writeFileUser(path.resolve(outputPath, `registries.json`), userList);
+  await writeFileUser(registriesPath, userList);
 };
 
 const program = new commander.Command();
