@@ -1,29 +1,32 @@
-# [1.0.0](https://github.com/alqmc/gacm/compare/v0.0.8...v1.0.0) (2022-07-07)
-
-
-### 🐛 Bug Fixes | Bug 修复
-
-* verison shell ([475f581](https://github.com/alqmc/gacm/commit/475f581))
-
-
-### 😞 Nonstandard | 不规范的commit
-
-* add LICENSE. ([26d77aa](https://github.com/alqmc/gacm/commit/26d77aa))
-* Update README.md ([df57404](https://github.com/alqmc/gacm/commit/df57404))
-
-
-
-## 0.0.3 (2022-04-26)
+# [1.0.0](https://github.com/alqmc/gacm/compare/v0.0.6...v1.0.0) (2022-07-07)
 
 
 ### ✨ Features | 新功能
 
-* user add delete ([b2eff8f](https://github.com/alqmc/gacm/commit/b2eff8f))
+* 自动添加本地账户 ([816e44b](https://github.com/alqmc/gacm/commit/816e44b))
+
+
+### 🏆 release | 版本发布
+
+* 1.0.0 ([b2c1d1f](https://github.com/alqmc/gacm/commit/b2c1d1f))
 
 
 ### 🐛 Bug Fixes | Bug 修复
 
-* detail ([a904d0c](https://github.com/alqmc/gacm/commit/a904d0c))
+* detail ([d7a596b](https://github.com/alqmc/gacm/commit/d7a596b))
+* readme ([070c2b7](https://github.com/alqmc/gacm/commit/070c2b7))
+* verison shell ([1b9003b](https://github.com/alqmc/gacm/commit/1b9003b))
+
+
+### 👷‍ Build System | 构建
+
+* 切换打包依赖 ([ee87feb](https://github.com/alqmc/gacm/commit/ee87feb))
+* 切换打包依赖 ([2501629](https://github.com/alqmc/gacm/commit/2501629))
+
+
+### 📝 Documentation | 文档
+
+* 更新readme ([251ab4b](https://github.com/alqmc/gacm/commit/251ab4b))
 
 
 
