@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { baseAction } from './commands/baseAction';
 import {
   addAction,
+  aliasAction,
   deleteAction,
   lsAction,
   useAction,
@@ -26,11 +27,22 @@ program
 
 program
   .command('add')
-  .option('-n, --name <name>', '当前用户')
-  .option('-e, --email <email>', '全局用户')
+  .option('-n, --name <name>', '用户名称')
+  .option('-e, --email <email>', '用户邮箱')
+  .option('-a, --alias <alias>', '用户别名')
   .description('添加用户')
   .action(addAction);
 
-program.command('delete <name>').description('删除用户').action(deleteAction);
+program
+  .command('alias <origin> <target>')
+  .option('-a, --alias', '是否有别名')
+  .description('添加别名')
+  .action(aliasAction);
+
+program
+  .command('delete <name>')
+  .option('-a, --alias', '按照别名删除')
+  .description('删除用户')
+  .action(deleteAction);
 
 program.parse(process.argv);

@@ -11,11 +11,18 @@ export interface UseCmd {
 export interface AddCmd {
   name: string;
   email: string;
+  alias: string;
 }
 export interface UserInfo {
   name: string;
   email: string;
+  alias?: string;
 }
-export interface UserInfoJson extends Record<string, any> {
+
+export interface UserInfoJson {
+  version: string;
+  users: Array<UserInfo>;
+}
+export interface UserOldInfoJson extends Record<string, any> {
   key: UserInfo;
 }

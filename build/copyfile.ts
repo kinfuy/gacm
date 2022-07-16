@@ -8,10 +8,6 @@ export const copyFiles = async () => {
       resolve(enterPath, 'package.json'),
       resolve(outputPath, 'package.json')
     ),
-    copyFile(
-      resolve(enterPath, 'registries.json'),
-      resolve(outputPath, 'registries.json')
-    ),
     copy(resolve(enterPath, 'assets'), resolve(outputPath, 'assets'), {
       recursive: true,
     }),
