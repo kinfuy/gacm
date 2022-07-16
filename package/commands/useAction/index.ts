@@ -189,19 +189,27 @@ export const insertUser = async (name: string, email: string, alias = '') => {
         (!alias && !user.alias && user.name === name) ||
         (alias && user.alias === alias)
       ) {
-        user.alias = alias || user.alias;
-        user.email = email;
-        user.name = name;
-        log.success(`[update]:${user.alias && `(${user.alias})`} ${name}`);
+        if (userList && !isExistAlias(userList.users, name)) {
+          user.alias = alias || user.alias;
+          user.email = email;
+          user.name = name;
+          log.success(`[update]:${user.alias && `(${user.alias})`} ${name}`);
+        } else {
+          log.error(`${name} is alias, please enter another one `);
+        }
       }
     });
   } else {
-    userList.users.push({
-      name,
-      email,
-      alias,
-    });
-    log.success(`[add]:${alias && `(${alias})`} ${name}`);
+    if (userList && !isExistAlias(userList.users, name)) {
+      userList.users.push({
+        name,
+        email,
+        alias,
+      });
+      log.success(`[add]:${alias && `(${alias})`} ${name}`);
+    } else {
+      log.error(`${name} is alias, please enter another one `);
+    }
   }
   userList.users.filter((x) => {
     return (

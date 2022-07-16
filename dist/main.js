@@ -14,7 +14,7 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name = "gacm";
-var version$1 = "1.0.1";
+var version$1 = "1.1.0";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -257,19 +257,27 @@ const insertUser = async (name, email, alias = "") => {
   if (isExist(userList.users, name, email, alias)) {
     userList.users.forEach((user) => {
       if (user.name === name && user.email === email || !alias && !user.alias && user.name === name || alias && user.alias === alias) {
-        user.alias = alias || user.alias;
-        user.email = email;
-        user.name = name;
-        log.success(`[update]:${user.alias && `(${user.alias})`} ${name}`);
+        if (userList && !isExistAlias(userList.users, name)) {
+          user.alias = alias || user.alias;
+          user.email = email;
+          user.name = name;
+          log.success(`[update]:${user.alias && `(${user.alias})`} ${name}`);
+        } else {
+          log.error(`${name} is alias, please enter another one `);
+        }
       }
     });
   } else {
-    userList.users.push({
-      name,
-      email,
-      alias
-    });
-    log.success(`[add]:${alias && `(${alias})`} ${name}`);
+    if (userList && !isExistAlias(userList.users, name)) {
+      userList.users.push({
+        name,
+        email,
+        alias
+      });
+      log.success(`[add]:${alias && `(${alias})`} ${name}`);
+    } else {
+      log.error(`${name} is alias, please enter another one `);
+    }
   }
   userList.users.filter((x) => {
     return userList && userList.users.filter((y) => x.name === y.name && x.email === y.email).length === 1;
