@@ -1,4 +1,4 @@
-# [v1.1.0](https://github.com/alqmc/gacm/compare/v1.0.1...v1.1.0)（2022-07-16）
+# [v1.1.0](https://github.com/alqmc/gacm/compare/v1.0.1...v1.1.0)（2022-07-17）
 
 
 ### ✨ Features | 新功能
@@ -7,6 +7,7 @@
 
 ### 🐛 Bug Fixes | Bug 修复
 
+  - Fix: deatil ([5da265e](https://github.com/alqmc/gacm/commit/5da265e))
   - Fix: add name not in alias ([c28f62c](https://github.com/alqmc/gacm/commit/c28f62c))
 
 ### 📝 Documentation | 文档
@@ -15,11 +16,12 @@
 
 ### 🔧 Continuous Integration | CI 配置
 
-  - Ci: issue template ([dc55cca](https://github.com/alqmc/gacm/commit/dc55cca))
+  - Ci: issue template ([57444c5](https://github.com/alqmc/gacm/commit/57444c5))
 
 ### ❤️  Contributors
 
 - Alqmc
+- 阿乐去买菜
 # [v1.0.1](https://github.com/alqmc/gacm/compare/v1.0.0...v1.0.1)（2022-07-07）
 
 
