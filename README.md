@@ -12,7 +12,7 @@
   <a href="https://npmcharts.com/compare/gacm?minimal=true">
   <img src="https://img.shields.io/npm/l/gacm.svg?color=blue">
   </a>
-  <a href="https://github.com/alqmc/gacm" target="__blank"><img alt="GitHub stars" src="https://img.shields.io/github/stars/alqmc/mangosteen?style=social">
+  <a href="https://github.com/alqmc/gacm" target="__blank"><img alt="GitHub stars" src="https://img.shields.io/github/stars/alqmc/gacm?style=social">
   
   </a>
   <br>
