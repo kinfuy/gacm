@@ -13,7 +13,7 @@ body:
       label: Version
       description: |
         ### **Check if the issue is reproducible with the latest stable version.**
-        You can use the command `npm ls gacm` to view it
+        You can use the command `pnpm view gacm versions` to view it
       placeholder: latest
     validations:
       required: true
