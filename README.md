@@ -53,7 +53,9 @@ gacm use xxx ---local
 
 gacm use xxx ---global
 
-gacm add --name xxx --email xxx
+gacm add --name xxx --email xxx --alias xxx
+
+gacm alias xxxx xxxx
 
 gacm delate user
 

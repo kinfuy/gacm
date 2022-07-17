@@ -1,4 +1,4 @@
-import { green } from 'kolorist';
+import { gray, green } from 'kolorist';
 import { registriesPath } from '../../config/path';
 import { getFileUser, writeFileUser } from '../../utils/getUserList';
 import { execCommand, run } from '../../utils/shell';
@@ -18,12 +18,10 @@ export const useAction = async (name: string, cmd: UseCmd) => {
   if (!userList) return log.error(`${name} not found`);
   if (!userList.version)
     userList = transformData(userList as unknown as UserOldInfoJson);
-  if (userList.users.every((x) => x.name !== name && x.alias !== name))
+  if (userList.users.every((x) => x.alias !== name))
     return log.error(`${name} not found`);
 
-  const useUser = userList.users.filter(
-    (x) => x.alias === name || x.name === name
-  );
+  const useUser = userList.users.filter((x) => x.alias === name);
 
   let env = 'local';
   if (cmd.system) env = 'system';
@@ -31,10 +29,11 @@ export const useAction = async (name: string, cmd: UseCmd) => {
   if (cmd.local) env = 'local';
   await run(`git config --${env} user.name ${useUser[0].name}`);
   await run(`git config --${env} user.email ${useUser[0].email}`);
+
   log.success(
-    `\n   git user changed [${env}]:${
-      useUser[0].alias && `(${useUser[0].alias})`
-    }${useUser[0].name}\n`
+    `git user changed [${env}]:${useUser[0].alias}${
+      useUser[0].alias !== useUser[0].name ? `(${useUser[0].name})` : ''
+    }`
   );
 };
 
@@ -60,14 +59,15 @@ export const lsAction = async () => {
     userList.users.push({
       name: currectUser,
       email: currectEmail,
-      alias: '',
+      alias: currectUser,
     });
   }
 
   const length =
     Math.max(
       ...userList.users.map(
-        (user) => user.name.length + (user.alias ? user.alias.length : 0)
+        (user) =>
+          user.alias.length + (user.alias !== user.name ? user.name.length : 0)
       )
     ) + 3;
   const prefix = '  ';
@@ -77,8 +77,9 @@ export const lsAction = async () => {
       user.name === currectUser && user.email === currectEmail
         ? `${green('*')}`
         : '';
-    return `${prefix + currect + user.name}${
-      user.alias && `(${user.alias})`
+    const isSame = user.alias === user.name;
+    return `${prefix + currect}${
+      isSame ? user.alias : `${user.alias}(${gray(user.name)})`
     }${geneDashLine(user.name, length)}${user.email}`;
   });
 
@@ -91,84 +92,52 @@ export const addAction = async (cmd: AddCmd) => {
   }
 };
 
-export const deleteAction = async (
-  name: string,
-  { alias }: { alias: boolean }
-) => {
+export const deleteAction = async (name: string) => {
   let userList = await getFileUser(registriesPath);
   if (!userList) return log.error(`no user`);
   if (!userList.version)
     userList = transformData(userList as unknown as UserOldInfoJson);
   const useUser = userList.users.filter(
-    (x) => x.name === name || (alias && x.alias === name)
+    (x) => x.alias === name || (!x.alias && x.name === name)
   );
   if (useUser.length === 0) return log.error(`${name} not found`);
 
   for (let i = 0; i < userList.users.length; i++) {
-    if (alias && userList.users[i].alias === name) {
+    if (
+      (!userList.users[i].alias && userList.users[i].name === name) ||
+      userList.users[i].alias === name
+    ) {
       log.success(
-        `[delete]: ${
-          userList.users[i].alias && `(${userList.users[i].alias})`
-        }${userList.users[i].name}`
+        `[delete]: ${userList.users[i].alias}${
+          userList.users[i].alias !== userList.users[i].name
+            ? `(${userList.users[i].name})`
+            : ''
+        }`
       );
       userList.users.splice(i, 1);
-    } else if (userList.users[i].name === name) {
-      if (!userList.users[i].alias) {
-        log.success(
-          `[delete]: ${
-            userList.users[i].alias && `(${userList.users[i].alias})`
-          }${userList.users[i].name}`
-        );
-        userList.users.splice(i, 1);
-      } else {
-        log.error(
-          `${name} has alias, please use gacm delete <alias> -a to delete`
-        );
-      }
     }
   }
   await writeFileUser(registriesPath, userList);
 };
 
-export const aliasAction = async (
-  origin: string,
-  target: string,
-  { alias }: { alias: string }
-) => {
+export const aliasAction = async (origin: string, target: string) => {
   if (!origin || !target) return;
   let userList = await getFileUser(registriesPath);
   if (!userList) userList = { version: gacmVersion, users: [] } as UserInfoJson;
 
   if (!userList.version)
     userList = transformData(userList as unknown as UserOldInfoJson);
+
   let changed = false;
   userList.users.forEach((x) => {
-    if (alias) {
-      if (x.alias === origin) {
-        if (userList && !isExistAlias(userList.users, target)) {
-          x.alias = target;
-          log.success(`[update]:(${origin}=>${x.alias}) ${x.name}`);
-        } else {
-          log.error(`${target} is Exist, please enter another one `);
-        }
-        changed = true;
+    if (x.alias === origin) {
+      if (userList && !isExistAlias(userList?.users, target)) {
+        x.alias = target;
+        log.success(`[update]: ${origin}=>${x.alias} (${x.name})`);
+      } else {
+        log.error(`${target} is exist, please enter another one `);
       }
-    } else {
-      if (x.name === origin) {
-        if (!x.alias) {
-          if (userList && !isExistAlias(userList.users, target)) {
-            x.alias = target;
-            log.success(`[update]:(${origin}=>${x.alias}) ${x.name}`);
-          } else {
-            log.error(`${target} is Exist, please enter another one `);
-          }
-        } else {
-          log.error(
-            `${x.name} has alias, please use gacm alias <alias> <target> -a to alias`
-          );
-        }
-        changed = true;
-      }
+      changed = true;
     }
   });
   if (!changed) return log.error(`${origin} not found`);
@@ -176,51 +145,36 @@ export const aliasAction = async (
 };
 
 // 插入用户
-export const insertUser = async (name: string, email: string, alias = '') => {
+export const insertUser = async (name: string, email: string, alias = name) => {
   let userList = await getFileUser(registriesPath);
   if (!userList) userList = { version: gacmVersion, users: [] } as UserInfoJson;
 
   if (!userList.version)
     userList = transformData(userList as unknown as UserOldInfoJson);
-  if (isExist(userList.users, name, email, alias)) {
+
+  if (isExistAlias(userList.users, alias, name, email)) {
     userList.users.forEach((user) => {
       if (
-        (user.name === name && user.email === email) ||
-        (!alias && !user.alias && user.name === name) ||
-        (alias && user.alias === alias)
+        user.alias === alias ||
+        (!user.alias && user.name === alias) ||
+        (name && email && user.name === name && user.email === email)
       ) {
-        if (userList && !isExistAlias(userList.users, name)) {
-          user.alias = alias || user.alias;
-          user.email = email;
-          user.name = name;
-          log.success(`[update]:${user.alias && `(${user.alias})`} ${name}`);
-        } else {
-          log.error(`${name} is alias, please enter another one `);
-        }
+        user.alias = alias === name ? (user.alias ? user.alias : alias) : alias;
+        user.email = email;
+        user.name = name;
+        log.success(
+          `[update]:${alias} ${user.alias !== name ? `(${user.name})` : ''}`
+        );
       }
     });
   } else {
-    if (userList && !isExistAlias(userList.users, name)) {
-      userList.users.push({
-        name,
-        email,
-        alias,
-      });
-      log.success(`[add]:${alias && `(${alias})`} ${name}`);
-    } else {
-      log.error(`${name} is alias, please enter another one `);
-    }
+    userList.users.push({
+      name,
+      email,
+      alias,
+    });
+    log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ''}`);
   }
-  userList.users.filter((x) => {
-    return (
-      userList &&
-      userList.users.filter((y) => x.name === y.name && x.email === y.email)
-        .length === 1
-    );
-  });
-  userList.users = uniqueFunc(userList.users, (item) => {
-    return `${item.name + item.email}`;
-  });
   await writeFileUser(registriesPath, userList);
 };
 
@@ -230,33 +184,22 @@ export const transformData = (data: UserOldInfoJson): UserInfoJson => {
     userInfo.users.push({
       name: data[x].name,
       email: data[x].email,
-      alias: '',
+      alias: data[x].name,
     });
   });
   return userInfo;
 };
 
-export const isExist = (
+export const isExistAlias = (
   users: UserInfo[],
-  name: string,
-  email: string,
-  alias?: string
+  alias: string,
+  name?: string,
+  email?: string
 ) => {
   return users.some(
     (x) =>
-      (x.name === name && x.email === email) ||
-      (!alias && !x.alias && x.name === name) ||
-      (alias && x.alias === alias)
-  );
-};
-
-export const isExistAlias = (users: UserInfo[], alias: string) => {
-  return users.some((x) => x.alias === alias);
-};
-
-const uniqueFunc = <T>(arr: T[], uniId: (item: T) => string) => {
-  const res = new Map();
-  return arr.filter(
-    (item: T) => !res.has(uniId(item)) && res.set(uniId(item), 1)
+      x.alias === alias ||
+      (!x.alias && x.name === alias) ||
+      (name && email && x.name === name && x.email === email)
   );
 };

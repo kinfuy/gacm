@@ -1,5 +1,5 @@
 name: '🐛 Bug report'
-description: Create a report to help us improve vue-simple-json
+description: Create a report to help us improve gacm
 title: '[Bug]: '
 labels: ['bug']
 body:
@@ -8,19 +8,12 @@ body:
       value: |
         Please fill out the following carefully in order to better fix the problem.
   - type: input
-    id: vue-simple-json-version
+    id: gacm-version
     attributes:
       label: Version
       description: |
         ### **Check if the issue is reproducible with the latest stable version.**
-        You can use the command `npm ls vue-simple-json` to view it
-      placeholder: latest
-    validations:
-      required: true
-  - type: input
-    id: vue-version
-    attributes:
-      label: Vue Version
+        You can use the command `npm ls gacm` to view it
       placeholder: latest
     validations:
       required: true

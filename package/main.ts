@@ -35,14 +35,9 @@ program
 
 program
   .command('alias <origin> <target>')
-  .option('-a, --alias', '是否有别名')
   .description('添加别名')
   .action(aliasAction);
 
-program
-  .command('delete <name>')
-  .option('-a, --alias', '按照别名删除')
-  .description('删除用户')
-  .action(deleteAction);
+program.command('delete <name>').description('删除用户').action(deleteAction);
 
 program.parse(process.argv);

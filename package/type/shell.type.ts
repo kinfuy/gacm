@@ -16,7 +16,7 @@ export interface AddCmd {
 export interface UserInfo {
   name: string;
   email: string;
-  alias?: string;
+  alias: string;
 }
 
 export interface UserInfoJson {
