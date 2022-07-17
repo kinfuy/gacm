@@ -1,3 +1,17 @@
+# [v1.1.1](https://github.com/alqmc/gacm/compare/v1.1.0...v1.1.1)（2022-07-17）
+
+
+### ✨ Features | 新功能
+
+  - Feat: 别名与名称统一，所有操作基于别名 ([9108ba7](https://github.com/alqmc/gacm/commit/9108ba7))
+
+### 🐛 Bug Fixes | Bug 修复
+
+  - Fix: log ([5f694ca](https://github.com/alqmc/gacm/commit/5f694ca))
+
+### ❤️  Contributors
+
+- Alqmc
 # [v1.1.0](https://github.com/alqmc/gacm/compare/v1.0.1...v1.1.0)（2022-07-17）
 
 
