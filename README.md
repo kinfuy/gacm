@@ -46,17 +46,23 @@ npm install gacm -g
 ```shell
 ## just like nvm
 
+## 查看用户列表，会自动添加本地用户
 gacm ls
 
 
-gacm use xxx ---local
+## 切换git账户
+gacm use xxx ---local  
 
 gacm use xxx ---global
 
+
+## 添加用户，--alias 可选  定义用户别名
 gacm add --name xxx --email xxx --alias xxx
 
+## 定义用户别名
 gacm alias xxxx xxxx
 
+## 删除用户
 gacm delate user
 
 ```
