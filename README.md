@@ -18,15 +18,17 @@
   <br>
 </p>
 
-<p align="center"> 极简的git账号管理工具（Git Account Management Tools ）</p>
+<p align="center"> Git Account Management Tools</p>
+
+English | [简体中文](./README-zh_CN.md)
 
 ### Features
 
-- ✨ git账户无缝切换
+- ✨ Seamless switching of GIT account
 
-- 🚀 极简的操作方式，just like nvm
+- 🚀Minimalist operation，just like nvm
 
-- 😊 gacm ls 自动添加本地git账户
+- 😊 gacm ls Automatically add local git account
 
 
 ### Getting Started
@@ -46,23 +48,23 @@ npm install gacm -g
 ```shell
 ## just like nvm
 
-## 查看用户列表，会自动添加本地用户
+## View the user list, and local users will be automatically added
 gacm ls
 
 
-## 切换git账户
+## Switch git account
 gacm use xxx ---local  
 
 gacm use xxx ---global
 
 
-## 添加用户，--alias 可选  定义用户别名
+## Add user，--alias Optional  define user alias
 gacm add --name xxx --email xxx --alias xxx
 
-## 定义用户别名
+## Define user alias
 gacm alias xxxx xxxx
 
-## 删除用户
+## Delete user
 gacm delate user
 
 ```
