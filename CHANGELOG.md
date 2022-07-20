@@ -1,3 +1,21 @@
+### 🐛 Bug Fixes | Bug 修复
+
+  - Fix: log ([7a1f0e6](https://github.com/alqmc/gacm/commit/7a1f0e6))
+  - Fix: detail ([f9c42d2](https://github.com/alqmc/gacm/commit/f9c42d2))
+
+### 📝 Documentation | 文档
+
+  - Docs: 更新文档 ([a843e67](https://github.com/alqmc/gacm/commit/a843e67))
+  - Docs: usage ([de64f7a](https://github.com/alqmc/gacm/commit/de64f7a))
+  - Docs: up readme ([cd0e4c4](https://github.com/alqmc/gacm/commit/cd0e4c4))
+
+### 🔧 Continuous Integration | CI 配置
+
+  - Ci: detail ([b0fd3b6](https://github.com/alqmc/gacm/commit/b0fd3b6))
+
+### ❤️  Contributors
+
+- Alqmc
 # [v1.1.1](https://github.com/alqmc/gacm/compare/v1.1.0...v1.1.1)（2022-07-17）
 
 
