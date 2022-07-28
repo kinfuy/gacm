@@ -48,18 +48,18 @@ var pkg = {
 	dependencies: dependencies
 };
 
-const PREFIX = "gacm";
+const PREFIX = "[gacm]:";
 const success = (msg) => console.log(`
-   ${kolorist.bgLightGreen(PREFIX)}:${kolorist.green(msg)}
+${kolorist.green(PREFIX + msg)}
 `);
 const error = (msg) => console.log(`
-   ${kolorist.bgLightRed(PREFIX)}:${kolorist.red(msg)}
+${kolorist.red(PREFIX + msg)}
 `);
 const warning = (msg) => console.log(`
-   ${kolorist.bgLightYellow(PREFIX)}:${kolorist.lightYellow(msg)}
+${kolorist.yellow(PREFIX + msg)}
 `);
 const info = (msg) => console.log(`
-   ${kolorist.bgLightBlue(PREFIX)}:${kolorist.blue(msg)}
+${PREFIX + kolorist.blue(msg)}
 `);
 const log = {
   success,
@@ -158,7 +158,7 @@ const useAction = async (name, cmd) => {
     env = "local";
   await run(`git config --${env} user.name ${useUser[0].name}`);
   await run(`git config --${env} user.email ${useUser[0].email}`);
-  log.success(`git user changed [${env}]:${useUser[0].alias !== useUser[0].name ? `(${useUser[0].name})` : ""}${useUser[0].alias}`);
+  log.success(`git user changed [${env}]:${useUser[0].alias}${useUser[0].alias !== useUser[0].name ? `(${useUser[0].name})` : ""}`);
 };
 const lsAction = async () => {
   let userList = await getFileUser(registriesPath) || {};
@@ -203,7 +203,7 @@ const deleteAction = async (name) => {
     return log.error(`${name} not found`);
   for (let i = 0; i < userList.users.length; i++) {
     if (!userList.users[i].alias && userList.users[i].name === name || userList.users[i].alias === name) {
-      log.success(`[delete]: ${userList.users[i].alias !== userList.users[i].name ? `(${userList.users[i].name})` : ""}${userList.users[i].alias}`);
+      log.success(`[delete]: ${userList.users[i].alias}${userList.users[i].alias !== userList.users[i].name ? `(${userList.users[i].name})` : ""}`);
       userList.users.splice(i, 1);
     }
   }
@@ -222,7 +222,7 @@ const aliasAction = async (origin, target) => {
     if (x.alias === origin) {
       if (userList && !isExistAlias(userList?.users, target)) {
         x.alias = target;
-        log.success(`[update]:(${x.name}) ${origin}=>${x.alias}`);
+        log.success(`[update]: ${origin}=>${x.alias} (${x.name})`);
       } else {
         log.error(`${target} is exist, please enter another one `);
       }
@@ -245,7 +245,7 @@ const insertUser = async (name, email, alias = name) => {
         user.alias = alias === name ? user.alias ? user.alias : alias : alias;
         user.email = email;
         user.name = name;
-        log.success(`[update]:${user.alias !== name ? `(${user.name})` : ""} ${alias}`);
+        log.success(`[update]:${alias} ${user.alias !== name ? `(${user.name})` : ""}`);
       }
     });
   } else {
@@ -254,7 +254,7 @@ const insertUser = async (name, email, alias = name) => {
       email,
       alias
     });
-    log.success(`[add]:${alias && `(${alias})`} ${name}`);
+    log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ""}`);
   }
   await writeFileUser(registriesPath, userList);
 };
