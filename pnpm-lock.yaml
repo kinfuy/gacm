@@ -10,7 +10,7 @@ specifiers:
   '@types/fs-extra': ^9.0.13
   '@types/gulp': ^4.0.9
   '@types/node': ^17.0.21
-  changeloger: 0.0.5
+  changeloger: 0.0.6
   commander: ^9.3.0
   commitizen: ^4.1.2
   execa: 5.0.1
@@ -42,7 +42,7 @@ devDependencies:
   '@types/fs-extra': 9.0.13
   '@types/gulp': 4.0.9
   '@types/node': 17.0.27
-  changeloger: 0.0.5
+  changeloger: 0.0.6
   commitizen: 4.2.4
   fs-extra: 10.1.0
   gulp: 4.0.2
@@ -1335,8 +1335,8 @@ packages:
       supports-color: 7.2.0
     dev: true
 
-  /changeloger/0.0.5:
-    resolution: {integrity: sha512-ys51xbpFcdxnAWajMLQlbFgjhPcqBepQQi+FNI+16bCOnfIxumeNtC1yfZfo7wOc/wlj6xS4NltrZplEVGQPtA==}
+  /changeloger/0.0.6:
+    resolution: {integrity: sha512-wxrf47LeawUXdbDFnD7FUZoPjlF5yfCaJERK8AmxeaH4NN5awvGXgyTDIlv8YHGblqkBeMPROn4t7MPKB8pMyg==}
     hasBin: true
     dependencies:
       execa: 5.0.1
