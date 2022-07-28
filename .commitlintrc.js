@@ -17,6 +17,7 @@ module.exports = {
         'test',
         "ci",
         'release',
+        'deps',
       ],
     ],
     'type-case': [0],
