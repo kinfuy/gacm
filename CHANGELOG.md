@@ -1,3 +1,6 @@
+# [v1.1.2](https://github.com/alqmc/gacm/compare/v1.1.1...v1.1.2)（2022-07-28）
+
+
 ### Features
 
   - Feat: 别名与名称统一，所有操作基于别名 ([fe6c196](https://github.com/alqmc/gacm/commit/fe6c196))
@@ -7,7 +10,7 @@
   - Fix: log ([7a1f0e6](https://github.com/alqmc/gacm/commit/7a1f0e6))
   - Fix: detail ([f9c42d2](https://github.com/alqmc/gacm/commit/f9c42d2))
 
-### ocumentation
+### Documentation
 
   - Docs: 更新文档 ([a843e67](https://github.com/alqmc/gacm/commit/a843e67))
   - Docs: 更新文档 ([bfe0985](https://github.com/alqmc/gacm/commit/bfe0985))
@@ -15,6 +18,14 @@
   - Docs: up readme ([cd0e4c4](https://github.com/alqmc/gacm/commit/cd0e4c4))
   - Docs: log ([1baa451](https://github.com/alqmc/gacm/commit/1baa451))
   - Docs: merge ([d6737ef](https://github.com/alqmc/gacm/commit/d6737ef))
+
+### Styles
+
+  - Style: log style ([b6dfbb4](https://github.com/alqmc/gacm/commit/b6dfbb4))
+
+### Dependencies
+
+  - Deps: changeloger ([426f58d](https://github.com/alqmc/gacm/commit/426f58d))
 
 ### ontinuous Integration
 
@@ -41,7 +52,7 @@
   - Fix: deatil ([5da265e](https://github.com/alqmc/gacm/commit/5da265e))
   - Fix: add name not in alias ([c28f62c](https://github.com/alqmc/gacm/commit/c28f62c))
 
-### ocumentation
+### Documentation
 
   - Docs: update ([a77df4a](https://github.com/alqmc/gacm/commit/a77df4a))
 
@@ -55,7 +66,7 @@
 
   - Fix: update lost users ([2175be2](https://github.com/alqmc/gacm/commit/2175be2))
 
-### ocumentation
+### Documentation
 
   - Docs: update ([c730345](https://github.com/alqmc/gacm/commit/c730345))
 
@@ -70,7 +81,7 @@
 
   - Fix: verison shell ([1b9003b](https://github.com/alqmc/gacm/commit/1b9003b))
 
-### ocumentation
+### Documentation
 
   - Docs: 更新readme ([abaf13e](https://github.com/alqmc/gacm/commit/abaf13e))
   - Docs: 更新readme ([251ab4b](https://github.com/alqmc/gacm/commit/251ab4b))
@@ -91,7 +102,7 @@
   - Fix: readme ([070c2b7](https://github.com/alqmc/gacm/commit/070c2b7))
   - Fix: detail ([d7a596b](https://github.com/alqmc/gacm/commit/d7a596b))
 
-### ocumentation
+### Documentation
 
   - Docs: 更新readme ([abaf13e](https://github.com/alqmc/gacm/commit/abaf13e))
 

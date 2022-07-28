@@ -6,7 +6,7 @@ module.exports = {
             perf: { title: 'Performance Improvements' },
             fix: { title: 'Bug Fixes' },
             refactor: { title: 'Code Refactoring' },
-            docs: { title: 'ocumentation' },
+            docs: { title: 'Documentation' },
             chore: { title: 'Chores' },
             build: { title: ' Build System' },
             test: { title: 'Tests' },
