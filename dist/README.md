@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="300px" src="./assets/git.svg">
+  <img width="300px" src="./package/assets/git.svg">
 </p>
 
 <p align="center">
@@ -18,15 +18,17 @@
   <br>
 </p>
 
-<p align="center"> 极简的git账号管理工具（Git Account Management Tools ）</p>
+<p align="center"> Git Account Management Tools</p>
+
+English | [简体中文](./README-zh_CN.md)
 
 ### Features
 
-- ✨ git账户无缝切换
+- ✨ Seamless switching of GIT account
 
-- 🚀 极简的操作方式，just like nvm
+- 🚀Minimalist operation，just like nvm
 
-- 😊 gacm ls 自动添加本地git账户
+- 😊 gacm ls Automatically add local git account
 
 
 ### Getting Started
@@ -46,17 +48,23 @@ npm install gacm -g
 ```shell
 ## just like nvm
 
+## View the user list, and local users will be automatically added
 gacm ls
 
 
-gacm use xxx ---local
+## Switch git account
+gacm use xxx ---local  
 
 gacm use xxx ---global
 
+
+## Add user，--alias Optional  define user alias
 gacm add --name xxx --email xxx --alias xxx
 
+## Define user alias
 gacm alias xxxx xxxx
 
+## Delete user
 gacm delate user
 
 ```
