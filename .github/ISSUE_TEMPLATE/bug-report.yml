@@ -18,15 +18,6 @@ body:
     validations:
       required: true
   - type: textarea
-    id: minimal-repo
-    attributes:
-      label: Link to minimal reproduction
-      description: |
-        **Provide a streamlined CodePen / CodeSandbox or GitHub repository link as much as possible. Please don't fill in a link randomly, it will only close your issue directly.**
-      placeholder: Please Input
-    validations:
-      required: true
-  - type: textarea
     id: reproduce
     attributes:
       label: Step to reproduce
@@ -34,7 +25,6 @@ body:
         **After the replay is turned on, what actions do we need to perform to make the bug appear? Simple and clear steps can help us locate the problem more quickly. Please clearly describe the steps of reproducing the issue. Issues without clear reproducing steps will not be repaired. If the issue marked with 'need reproduction' does not provide relevant steps within 7 days, it will be closed directly.**
       placeholder: Please Input
     validations:
-      required: true
   - type: textarea
     id: expected
     attributes:

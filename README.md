@@ -53,13 +53,13 @@ gacm ls
 
 
 ## Switch git account
-gacm use xxx ---local  
+gacm use xxx --local  
 
-gacm use xxx ---global
+gacm use xxx --global
 
 
 ## Add user，--alias Optional  define user alias
-gacm add --name xxx --email xxx --alias xxx
+gacm add --name xxx --email xxx [--alias xxx]
 
 ## Define user alias
 gacm alias xxxx xxxx

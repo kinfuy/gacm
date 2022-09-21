@@ -53,13 +53,13 @@ gacm ls
 
 
 ## 切换git账户
-gacm use xxx ---local  
+gacm use xxx --local  
 
-gacm use xxx ---global
+gacm use xxx --global
 
 
 ## 添加用户，--alias 可选  定义用户别名
-gacm add --name xxx --email xxx --alias xxx
+gacm add --name xxx --email xxx [--alias xxx]
 
 ## 定义用户别名
 gacm alias xxxx xxxx
