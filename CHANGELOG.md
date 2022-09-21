@@ -1,3 +1,6 @@
+# [v1.1.3](https://github.com/alqmc/gacm/compare/v1.1.2...v1.1.3)（2022-09-21）
+
+
 ## What's Changed
   - Fix: 修复mac执行异常 ([#8](https://github.com/alqmc/gacm/pull/#8))
 # [v1.1.2](https://github.com/alqmc/gacm/compare/v1.1.1...v1.1.2)（2022-07-28）
