@@ -64,8 +64,8 @@ gacm add --name xxx --email xxx [--alias xxx]
 ## Define user alias
 gacm alias xxxx xxxx
 
-## Delete user
-gacm delate user
+## delete user
+gacm delete user
 
 ```
 ### License
