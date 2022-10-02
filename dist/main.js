@@ -14,39 +14,78 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name = "gacm";
-var version$1 = "1.1.3";
-var description = "git account manage";
-var keywords = [
-	"git",
-	"account",
-	"manage"
-];
-var license = "MIT";
-var author = "alqmc";
-var bin = {
-	gacm: "main.js"
+var version = "1.1.3";
+var description = "gacm";
+var scripts = {
+	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
+	clear: "rimraf dist",
+	link: "cd dist && pnpm link --global",
+	push: "git push gitee master && git push github master",
+	"update:version": "sucrase-node build/utils/version.ts",
+	log: "changeloger",
+	release: "sucrase-node script/release.ts",
+	prepare: "husky install"
 };
-var publishConfig = {
-	access: "public"
+var author = "alqmc";
+var license = "MIT";
+var devDependencies = {
+	"@alqmc/build-ts": "^0.0.8",
+	"@alqmc/build-utils": "^0.0.3",
+	"@alqmc/eslint-config": "0.0.4",
+	"@commitlint/cli": "^8.3.5",
+	"@commitlint/config-angular": "^8.3.4",
+	"@commitlint/config-conventional": "^16.2.1",
+	"@types/fs-extra": "^9.0.13",
+	"@types/gulp": "^4.0.9",
+	"@types/node": "^17.0.21",
+	"@types/prompts": "^2.0.14",
+	changeloger: "0.1.0",
+	commitizen: "^4.1.2",
+	"fs-extra": "^10.1.0",
+	gulp: "^4.0.2",
+	husky: "^8.0.1",
+	"lint-staged": "^10.5.4",
+	prettier: "^2.6.2",
+	prompts: "^2.4.2",
+	rimraf: "^3.0.2",
+	sucrase: "^3.20.3",
+	tslib: "^2.4.0",
+	typescript: "^4.6.3"
 };
 var dependencies = {
 	commander: "^9.3.0",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
-	minimist: "^1.2.6"
+	minimist: "^1.2.6",
+	prompts: "^2.4.2"
+};
+var config = {
+	commitizen: {
+		path: "./node_modules/cz-conventional-changelog"
+	}
 };
 var pkg = {
 	name: name,
-	version: version$1,
-	"private": false,
+	version: version,
 	description: description,
-	keywords: keywords,
-	license: license,
+	scripts: scripts,
 	author: author,
-	bin: bin,
-	publishConfig: publishConfig,
-	dependencies: dependencies
+	license: license,
+	devDependencies: devDependencies,
+	dependencies: dependencies,
+	config: config
 };
+
+const useVersion = async (cmd) => {
+  if (cmd.version)
+    console.log(pkg.version);
+};
+
+const rootPath = __dirname;
+__dirname;
+path.resolve(rootPath, "package");
+const HOME = process.env[process.platform === "win32" ? "USERPROFILE" : "HOME"] || "";
+const registriesPath = path.join(HOME, ".gacmrc");
 
 const PREFIX = "[gacm]:";
 const success = (msg) => console.log(`
@@ -67,21 +106,6 @@ const log = {
   warning,
   info
 };
-
-const version = async () => {
-  log.success(`${pkg.version}`);
-};
-
-const baseAction = async (cmd) => {
-  if (cmd.version)
-    await version();
-};
-
-const rootPath = __dirname;
-__dirname;
-path.resolve(rootPath, "package");
-const HOME = process.env[process.platform === "win32" ? "USERPROFILE" : "HOME"] || "";
-const registriesPath = path.join(HOME, ".gacmrc");
 
 const { readFile, writeFile } = fs.promises;
 const getFileUser = async (rootPath) => {
@@ -140,27 +164,47 @@ const printMessages = (messages) => {
   console.log("\n");
 };
 
-const useAction = async (name, cmd) => {
+const insertUser = async (name, email, alias = name) => {
   let userList = await getFileUser(registriesPath);
   if (!userList)
-    return log.error(`${name} not found`);
+    userList = { version: "", users: [] };
   if (!userList.version)
     userList = transformData(userList);
-  if (userList.users.every((x) => x.alias !== name))
-    return log.error(`${name} not found`);
-  const useUser = userList.users.filter((x) => x.alias === name);
-  let env = "local";
-  if (cmd.system)
-    env = "system";
-  if (cmd.global)
-    env = "global";
-  if (cmd.local)
-    env = "local";
-  await run(`git config --${env} user.name ${useUser[0].name}`);
-  await run(`git config --${env} user.email ${useUser[0].email}`);
-  log.success(`git user changed [${env}]:${useUser[0].alias}${useUser[0].alias !== useUser[0].name ? `(${useUser[0].name})` : ""}`);
+  if (isExistAlias(userList.users, alias, name, email)) {
+    userList.users.forEach((user) => {
+      if (user.alias === alias || !user.alias && user.name === alias || name && email && user.name === name && user.email === email) {
+        user.alias = alias === name ? user.alias ? user.alias : alias : alias;
+        user.email = email;
+        user.name = name;
+        log.success(`[update]:${alias} ${user.alias !== name ? `(${user.name})` : ""}`);
+      }
+    });
+  } else {
+    userList.users.push({
+      name,
+      email,
+      alias
+    });
+    log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ""}`);
+  }
+  await writeFileUser(registriesPath, userList);
 };
-const lsAction = async () => {
+const transformData = (data) => {
+  const userInfo = { version: "", users: [] };
+  Object.keys(data).forEach((x) => {
+    userInfo.users.push({
+      name: data[x].name,
+      email: data[x].email,
+      alias: data[x].name
+    });
+  });
+  return userInfo;
+};
+const isExistAlias = (users, alias, name, email) => {
+  return users.some((x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email);
+};
+
+const useLs = async () => {
   let userList = await getFileUser(registriesPath) || {};
   const currectUser = await execCommand("git", ["config", "user.name"]);
   const currectEmail = await execCommand("git", ["config", "user.email"]);
@@ -187,12 +231,8 @@ const lsAction = async () => {
   });
   printMessages(messages);
 };
-const addAction = async (cmd) => {
-  if (cmd.name && cmd.email) {
-    await insertUser(cmd.name, cmd.email, cmd.alias);
-  }
-};
-const deleteAction = async (name) => {
+
+const useDelete = async (name) => {
   let userList = await getFileUser(registriesPath);
   if (!userList)
     return log.error(`no user`);
@@ -209,12 +249,19 @@ const deleteAction = async (name) => {
   }
   await writeFileUser(registriesPath, userList);
 };
-const aliasAction = async (origin, target) => {
+
+const useAdd = async (cmd) => {
+  if (cmd.name && cmd.email) {
+    await insertUser(cmd.name, cmd.email, cmd.alias);
+  }
+};
+
+const useAlias = async (origin, target) => {
   if (!origin || !target)
     return;
   let userList = await getFileUser(registriesPath);
   if (!userList)
-    userList = { version: version$1, users: [] };
+    userList = { version: "", users: [] };
   if (!userList.version)
     userList = transformData(userList);
   let changed = false;
@@ -233,51 +280,33 @@ const aliasAction = async (origin, target) => {
     return log.error(`${origin} not found`);
   await writeFileUser(registriesPath, userList);
 };
-const insertUser = async (name, email, alias = name) => {
+
+const useUse = async (name, cmd) => {
   let userList = await getFileUser(registriesPath);
   if (!userList)
-    userList = { version: version$1, users: [] };
+    return log.error(`${name} not found`);
   if (!userList.version)
     userList = transformData(userList);
-  if (isExistAlias(userList.users, alias, name, email)) {
-    userList.users.forEach((user) => {
-      if (user.alias === alias || !user.alias && user.name === alias || name && email && user.name === name && user.email === email) {
-        user.alias = alias === name ? user.alias ? user.alias : alias : alias;
-        user.email = email;
-        user.name = name;
-        log.success(`[update]:${alias} ${user.alias !== name ? `(${user.name})` : ""}`);
-      }
-    });
-  } else {
-    userList.users.push({
-      name,
-      email,
-      alias
-    });
-    log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ""}`);
-  }
-  await writeFileUser(registriesPath, userList);
-};
-const transformData = (data) => {
-  const userInfo = { version: version$1, users: [] };
-  Object.keys(data).forEach((x) => {
-    userInfo.users.push({
-      name: data[x].name,
-      email: data[x].email,
-      alias: data[x].name
-    });
-  });
-  return userInfo;
-};
-const isExistAlias = (users, alias, name, email) => {
-  return users.some((x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email);
+  if (userList.users.every((x) => x.alias !== name))
+    return log.error(`${name} not found`);
+  const useUser = userList.users.filter((x) => x.alias === name);
+  let env = "local";
+  if (cmd.system)
+    env = "system";
+  if (cmd.global)
+    env = "global";
+  if (cmd.local)
+    env = "local";
+  await run(`git config --${env} user.name ${useUser[0].name}`);
+  await run(`git config --${env} user.email ${useUser[0].email}`);
+  log.success(`git user changed [${env}]:${useUser[0].alias}${useUser[0].alias !== useUser[0].name ? `(${useUser[0].name})` : ""}`);
 };
 
 const program = new commander.Command();
-program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("\u67E5\u770B\u5F53\u524D\u7248\u672C").action(baseAction);
-program.command("ls").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(lsAction);
-program.command("use <name>").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").description("\u5207\u6362\u7528\u6237").action(useAction);
-program.command("add").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").description("\u6DFB\u52A0\u7528\u6237").action(addAction);
-program.command("alias <origin> <target>").description("\u6DFB\u52A0\u522B\u540D").action(aliasAction);
-program.command("delete <name>").description("\u5220\u9664\u7528\u6237").action(deleteAction);
+program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("\u67E5\u770B\u5F53\u524D\u7248\u672C").action(useVersion);
+program.command("ls").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
+program.command("use <name>").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").description("\u5207\u6362\u7528\u6237").action(useUse);
+program.command("add").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").description("\u6DFB\u52A0\u7528\u6237").action(useAdd);
+program.command("alias <origin> <target>").description("\u6DFB\u52A0\u522B\u540D").action(useAlias);
+program.command("delete <name>").description("\u5220\u9664\u7528\u6237").action(useDelete);
 program.parse(process.argv);
