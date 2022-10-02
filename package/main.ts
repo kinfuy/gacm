@@ -1,21 +1,22 @@
 import { Command } from 'commander';
-import { baseAction } from './commands/baseAction';
 import {
-  addAction,
-  aliasAction,
-  deleteAction,
-  lsAction,
-  useAction,
-} from './commands/useAction';
+  useAdd,
+  useAlias,
+  useDelete,
+  useLs,
+  useUse,
+  useVersion,
+} from './commands';
+
 const program = new Command();
 
 program
   .option('-v, --version', '查看当前版本')
   .usage('command <option>')
   .description('查看当前版本')
-  .action(baseAction);
+  .action(useVersion);
 
-program.command('ls').description('当前用户列表').action(lsAction);
+program.command('ls').description('当前用户列表').action(useLs);
 
 program
   .command('use <name>')
@@ -23,7 +24,7 @@ program
   .option('-g, --global', '全局用户')
   .option('-s, --system', '系统用户')
   .description('切换用户')
-  .action(useAction);
+  .action(useUse);
 
 program
   .command('add')
@@ -31,13 +32,13 @@ program
   .option('-e, --email <email>', '用户邮箱')
   .option('-a, --alias <alias>', '用户别名')
   .description('添加用户')
-  .action(addAction);
+  .action(useAdd);
 
 program
   .command('alias <origin> <target>')
   .description('添加别名')
-  .action(aliasAction);
+  .action(useAlias);
 
-program.command('delete <name>').description('删除用户').action(deleteAction);
+program.command('delete <name>').description('删除用户').action(useDelete);
 
 program.parse(process.argv);

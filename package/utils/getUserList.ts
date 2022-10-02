@@ -1,6 +1,7 @@
 import { existsSync, promises } from 'fs';
 import { log } from './log';
-import type { UserInfoJson } from '../type/shell.type';
+import { transformData } from './helper';
+import type { UserInfoJson, UserOldInfoJson } from '../type/shell.type';
 const { readFile, writeFile } = promises;
 
 /**
@@ -11,9 +12,12 @@ const { readFile, writeFile } = promises;
 export const getFileUser = async (rootPath: string) => {
   if (existsSync(rootPath)) {
     const fileBuffer = await readFile(rootPath, 'utf-8');
-    const userList = fileBuffer
+    let userList = fileBuffer
       ? (JSON.parse(fileBuffer.toString()) as UserInfoJson)
       : null;
+    if (userList && !userList.version)
+      userList = transformData(userList as unknown as UserOldInfoJson);
+
     return userList;
   }
   return null;
