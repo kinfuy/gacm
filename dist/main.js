@@ -8,10 +8,12 @@ var fs = require('fs');
 var child_process = require('child_process');
 var process$1 = require('process');
 var execa = require('execa');
+var prompts = require('prompts');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
+var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 
 var name = "gacm";
 var version = "1.1.3";
@@ -98,7 +100,7 @@ const warning = (msg) => console.log(`
 ${kolorist.yellow(PREFIX + msg)}
 `);
 const info = (msg) => console.log(`
-${PREFIX + kolorist.blue(msg)}
+${kolorist.blue(PREFIX + msg)}
 `);
 const log = {
   success,
@@ -107,11 +109,53 @@ const log = {
   info
 };
 
+const insertUser = async (name, email, alias = name) => {
+  let userList = await getFileUser(registriesPath);
+  if (!userList)
+    userList = { version: "", users: [] };
+  if (!userList.version)
+    userList = transformData(userList);
+  if (isExistAlias(userList.users, alias, name, email)) {
+    userList.users.forEach((user) => {
+      if (user.alias === alias || !user.alias && user.name === alias || name && email && user.name === name && user.email === email) {
+        user.alias = alias === name ? user.alias ? user.alias : alias : alias;
+        user.email = email;
+        user.name = name;
+        log.success(`[update]:${alias} ${user.alias !== name ? `(${user.name})` : ""}`);
+      }
+    });
+  } else {
+    userList.users.push({
+      name,
+      email,
+      alias
+    });
+    log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ""}`);
+  }
+  await writeFileUser(registriesPath, userList);
+};
+const transformData = (data) => {
+  const userInfo = { version: "", users: [] };
+  Object.keys(data).forEach((x) => {
+    userInfo.users.push({
+      name: data[x].name,
+      email: data[x].email,
+      alias: data[x].name
+    });
+  });
+  return userInfo;
+};
+const isExistAlias = (users, alias, name, email) => {
+  return users.some((x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email);
+};
+
 const { readFile, writeFile } = fs.promises;
 const getFileUser = async (rootPath) => {
   if (fs.existsSync(rootPath)) {
     const fileBuffer = await readFile(rootPath, "utf-8");
-    const userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
+    let userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
+    if (userList && !userList.version)
+      userList = transformData(userList);
     return userList;
   }
   return null;
@@ -164,52 +208,10 @@ const printMessages = (messages) => {
   console.log("\n");
 };
 
-const insertUser = async (name, email, alias = name) => {
-  let userList = await getFileUser(registriesPath);
-  if (!userList)
-    userList = { version: "", users: [] };
-  if (!userList.version)
-    userList = transformData(userList);
-  if (isExistAlias(userList.users, alias, name, email)) {
-    userList.users.forEach((user) => {
-      if (user.alias === alias || !user.alias && user.name === alias || name && email && user.name === name && user.email === email) {
-        user.alias = alias === name ? user.alias ? user.alias : alias : alias;
-        user.email = email;
-        user.name = name;
-        log.success(`[update]:${alias} ${user.alias !== name ? `(${user.name})` : ""}`);
-      }
-    });
-  } else {
-    userList.users.push({
-      name,
-      email,
-      alias
-    });
-    log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ""}`);
-  }
-  await writeFileUser(registriesPath, userList);
-};
-const transformData = (data) => {
-  const userInfo = { version: "", users: [] };
-  Object.keys(data).forEach((x) => {
-    userInfo.users.push({
-      name: data[x].name,
-      email: data[x].email,
-      alias: data[x].name
-    });
-  });
-  return userInfo;
-};
-const isExistAlias = (users, alias, name, email) => {
-  return users.some((x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email);
-};
-
 const useLs = async () => {
-  let userList = await getFileUser(registriesPath) || {};
+  const userList = await getFileUser(registriesPath) || {};
   const currectUser = await execCommand("git", ["config", "user.name"]);
   const currectEmail = await execCommand("git", ["config", "user.email"]);
-  if (!userList.version)
-    userList = transformData(userList);
   if (userList.users.length === 0 && (!currectUser || !currectEmail)) {
     return log.info("no user");
   }
@@ -233,11 +235,9 @@ const useLs = async () => {
 };
 
 const useDelete = async (name) => {
-  let userList = await getFileUser(registriesPath);
+  const userList = await getFileUser(registriesPath);
   if (!userList)
     return log.error(`no user`);
-  if (!userList.version)
-    userList = transformData(userList);
   const useUser = userList.users.filter((x) => x.alias === name || !x.alias && x.name === name);
   if (useUser.length === 0)
     return log.error(`${name} not found`);
@@ -262,8 +262,6 @@ const useAlias = async (origin, target) => {
   let userList = await getFileUser(registriesPath);
   if (!userList)
     userList = { version: "", users: [] };
-  if (!userList.version)
-    userList = transformData(userList);
   let changed = false;
   userList.users.forEach((x) => {
     if (x.alias === origin) {
@@ -281,15 +279,32 @@ const useAlias = async (origin, target) => {
   await writeFileUser(registriesPath, userList);
 };
 
-const useUse = async (name, cmd) => {
-  let userList = await getFileUser(registriesPath);
+const useUse = async ([name], cmd) => {
+  const userList = await getFileUser(registriesPath);
   if (!userList)
+    return log.error(`no user exists`);
+  let useUser = void 0;
+  if (name) {
+    useUser = userList.users.find((x) => x.alias === name);
+  } else {
+    const { user } = await prompts__default["default"]({
+      type: "select",
+      name: "user",
+      message: "Pick a account",
+      choices: userList.users.map((x) => {
+        return {
+          title: `${x.alias}${x.alias === x.name ? "" : `(${x.name})`} ${x.email}`,
+          value: x
+        };
+      })
+    });
+    if (useUser)
+      useUser = user;
+    else
+      return log.error(`user cancels operation`);
+  }
+  if (!useUser)
     return log.error(`${name} not found`);
-  if (!userList.version)
-    userList = transformData(userList);
-  if (userList.users.every((x) => x.alias !== name))
-    return log.error(`${name} not found`);
-  const useUser = userList.users.filter((x) => x.alias === name);
   let env = "local";
   if (cmd.system)
     env = "system";
@@ -297,15 +312,15 @@ const useUse = async (name, cmd) => {
     env = "global";
   if (cmd.local)
     env = "local";
-  await run(`git config --${env} user.name ${useUser[0].name}`);
-  await run(`git config --${env} user.email ${useUser[0].email}`);
-  log.success(`git user changed [${env}]:${useUser[0].alias}${useUser[0].alias !== useUser[0].name ? `(${useUser[0].name})` : ""}`);
+  await run(`git config --${env} user.name ${useUser.name}`);
+  await run(`git config --${env} user.email ${useUser.email}`);
+  log.success(`git user changed [${env}]:${useUser.alias}${useUser.alias !== useUser.name ? `(${useUser.name})` : ""}`);
 };
 
 const program = new commander.Command();
 program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("\u67E5\u770B\u5F53\u524D\u7248\u672C").action(useVersion);
 program.command("ls").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
-program.command("use <name>").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").description("\u5207\u6362\u7528\u6237").action(useUse);
+program.command("use [name...]").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").description("\u5207\u6362\u7528\u6237").action(useUse);
 program.command("add").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").description("\u6DFB\u52A0\u7528\u6237").action(useAdd);
 program.command("alias <origin> <target>").description("\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>").description("\u5220\u9664\u7528\u6237").action(useDelete);

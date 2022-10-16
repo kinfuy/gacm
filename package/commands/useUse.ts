@@ -1,7 +1,9 @@
+import prompts from 'prompts';
 import { registriesPath } from '../config/path';
 import { getFileUser } from '../utils/getUserList';
 import { log } from '../utils/log';
 import { run } from '../utils/shell';
+import type { UserInfo } from '../type/shell.type';
 
 export interface UseCmd {
   local?: boolean;
@@ -9,15 +11,34 @@ export interface UseCmd {
   system?: boolean;
 }
 
-export const useUse = async (name: string, cmd: UseCmd) => {
+export const useUse = async ([name]: string[], cmd: UseCmd) => {
   const userList = await getFileUser(registriesPath);
 
-  if (!userList) return log.error(`${name} not found`);
+  if (!userList) return log.error(`no user exists`);
 
-  if (userList.users.every((x) => x.alias !== name))
-    return log.error(`${name} not found`);
+  let useUser: UserInfo | undefined = undefined;
+  if (name) {
+    useUser = userList.users.find((x) => x.alias === name);
+  } else {
+    const { user } = await prompts({
+      type: 'select',
+      name: 'user',
+      message: 'Pick a account',
+      choices: userList.users.map((x) => {
+        return {
+          title: `${x.alias}${x.alias === x.name ? '' : `(${x.name})`} ${
+            x.email
+          }`,
+          value: x,
+        };
+      }),
+    });
 
-  const useUser = userList.users.filter((x) => x.alias === name);
+    if (useUser) useUser = user;
+    else return log.error(`user cancels operation`);
+  }
+
+  if (!useUser) return log.error(`${name} not found`);
 
   let env = 'local';
 
@@ -27,13 +48,13 @@ export const useUse = async (name: string, cmd: UseCmd) => {
 
   if (cmd.local) env = 'local';
 
-  await run(`git config --${env} user.name ${useUser[0].name}`);
+  await run(`git config --${env} user.name ${useUser.name}`);
 
-  await run(`git config --${env} user.email ${useUser[0].email}`);
+  await run(`git config --${env} user.email ${useUser.email}`);
 
   log.success(
-    `git user changed [${env}]:${useUser[0].alias}${
-      useUser[0].alias !== useUser[0].name ? `(${useUser[0].name})` : ''
+    `git user changed [${env}]:${useUser.alias}${
+      useUser.alias !== useUser.name ? `(${useUser.name})` : ''
     }`
   );
 };
