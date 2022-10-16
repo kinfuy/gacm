@@ -19,7 +19,7 @@ program
 program.command('ls').description('当前用户列表').action(useLs);
 
 program
-  .command('use <name>')
+  .command('use [name...]')
   .option('-l, --local', '当前用户')
   .option('-g, --global', '全局用户')
   .option('-s, --system', '系统用户')

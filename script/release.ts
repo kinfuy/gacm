@@ -17,8 +17,6 @@ const main = async () => {
     await run('git', ['commit', '-m', `release: v${tag}`]);
     const branch = await run('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
     await run('git', ['github', 'push', branch]);
-    await run('cd', ['dist']);
-    await run('cnpm', ['publish']);
   } catch (error) {
     process.exit(0);
   }
