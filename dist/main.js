@@ -16,7 +16,7 @@ var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 
 var name = "gacm";
-var version = "1.1.3";
+var version = "1.1.4";
 var description = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -299,7 +299,7 @@ const useUse = async ([name], cmd) => {
       })
     });
     if (!user) {
-      log.error(`user cancels operation`);
+      log.error(`user cancel operation`);
       return;
     }
     useUser = user;
