@@ -298,10 +298,11 @@ const useUse = async ([name], cmd) => {
         };
       })
     });
-    if (useUser)
-      useUser = user;
-    else
-      return log.error(`user cancels operation`);
+    if (!user) {
+      log.error(`user cancels operation`);
+      return;
+    }
+    useUser = user;
   }
   if (!useUser)
     return log.error(`${name} not found`);
