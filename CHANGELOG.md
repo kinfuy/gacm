@@ -1,3 +1,11 @@
+# [v1.1.4](https://github.com/alqmc/gacm/compare/v1.1.3...v1.1.4)（2022-10-20）
+
+
+## What's Changed
+  - Feat: gacm use user switching can be selected ([6e8df66](https://github.com/alqmc/gacm/commit/6e8df66))
+  - Fix: gacm use switch cancel ([ec6bd54](https://github.com/alqmc/gacm/commit/ec6bd54))
+  - Refactor: commands ([45ff006](https://github.com/alqmc/gacm/commit/45ff006))
+  - Docs: delete ([e6f3359](https://github.com/alqmc/gacm/commit/e6f3359))
 # [v1.1.3](https://github.com/alqmc/gacm/compare/v1.1.2...v1.1.3)（2022-09-21）
 
 
