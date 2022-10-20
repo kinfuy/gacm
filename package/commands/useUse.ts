@@ -34,7 +34,7 @@ export const useUse = async ([name]: string[], cmd: UseCmd) => {
       }),
     });
     if (!user) {
-      log.error(`user cancels operation`);
+      log.error(`user cancel operation`);
       return;
     }
     useUser = user;
