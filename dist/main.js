@@ -16,7 +16,7 @@ var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 
 var name = "gacm";
-var version = "1.1.4";
+var version = "1.1.5";
 var description = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
