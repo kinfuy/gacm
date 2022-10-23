@@ -3,9 +3,25 @@ import { buildTypescriptLib } from '@alqmc/build-ts';
 import { enterPath, outputPath, rootPath } from './utils/path';
 import type { DefineLibConfig } from '@alqmc/build-ts';
 
-const buildConfig: DefineLibConfig = {
+const buildGacmConfig: DefineLibConfig = {
   baseOptions: {
-    input: resolve(enterPath, 'main.ts'),
+    input: resolve(enterPath, 'gacm.ts'),
+    outPutPath: outputPath,
+    enterPath,
+    pkgPath: resolve(enterPath, 'package.json'),
+    tsConfigPath: resolve(rootPath, 'tsconfig.json'),
+    preserveModules: false,
+    extraOptions: {
+      banner: '#!/usr/bin/env node',
+    },
+  },
+  buildProduct: ['lib'],
+  pureOutput: true,
+};
+
+const buildGnrmConfig: DefineLibConfig = {
+  baseOptions: {
+    input: resolve(enterPath, 'gnrm.ts'),
     outPutPath: outputPath,
     enterPath,
     pkgPath: resolve(enterPath, 'package.json'),
@@ -20,5 +36,6 @@ const buildConfig: DefineLibConfig = {
 };
 
 export const buildBundle = async () => {
-  return buildTypescriptLib(buildConfig);
+  await buildTypescriptLib(buildGacmConfig);
+  await buildTypescriptLib(buildGnrmConfig);
 };

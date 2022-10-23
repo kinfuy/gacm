@@ -1,8 +1,8 @@
-import { registriesPath } from '../config/path';
-import { getFileUser, writeFileUser } from '../utils/getUserList';
-import { log } from '../utils/log';
-import { isExistAlias } from '../utils/helper';
-import type { UserInfoJson } from '../type/shell.type';
+import { registriesPath } from '../../config/path';
+import { getFileUser, writeFileUser } from '../../utils/getUserList';
+import { log } from '../../utils/log';
+import { isExistAlias } from '../../utils/helper';
+import type { UserInfoJson } from '../../type/shell.type';
 
 export const useAlias = async (origin: string, target: string) => {
   if (!origin || !target) return;

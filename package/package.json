@@ -11,7 +11,8 @@
   "license": "MIT",
   "author": "alqmc",
   "bin": {
-    "gacm": "main.js"
+    "gacm": "gacm.js",
+    "gnrm": "gnrm.js"
   },
   "publishConfig": {
     "access": "public"

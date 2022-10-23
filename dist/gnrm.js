@@ -5,8 +5,8 @@ var commander = require('commander');
 var kolorist = require('kolorist');
 var path = require('path');
 var fs = require('fs');
-var child_process = require('child_process');
-var process$1 = require('process');
+require('child_process');
+require('process');
 var execa = require('execa');
 var prompts = require('prompts');
 
@@ -17,70 +17,43 @@ var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 
 var name = "gacm";
 var version = "1.1.5";
-var description = "gacm";
-var scripts = {
-	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
-	clear: "rimraf dist",
-	link: "cd dist && pnpm link --global",
-	push: "git push gitee master && git push github master",
-	"update:version": "sucrase-node build/utils/version.ts",
-	log: "changeloger",
-	release: "sucrase-node script/release.ts",
-	prepare: "husky install"
-};
-var author = "alqmc";
+var description = "git account manage";
+var keywords = [
+	"git",
+	"account",
+	"manage"
+];
 var license = "MIT";
-var devDependencies = {
-	"@alqmc/build-ts": "^0.0.8",
-	"@alqmc/build-utils": "^0.0.3",
-	"@alqmc/eslint-config": "0.0.4",
-	"@commitlint/cli": "^8.3.5",
-	"@commitlint/config-angular": "^8.3.4",
-	"@commitlint/config-conventional": "^16.2.1",
-	"@types/fs-extra": "^9.0.13",
-	"@types/gulp": "^4.0.9",
-	"@types/node": "^17.0.21",
-	"@types/prompts": "^2.0.14",
-	changeloger: "0.1.0",
-	commitizen: "^4.1.2",
-	"fs-extra": "^10.1.0",
-	gulp: "^4.0.2",
-	husky: "^8.0.1",
-	"lint-staged": "^10.5.4",
-	prettier: "^2.6.2",
-	prompts: "^2.4.2",
-	rimraf: "^3.0.2",
-	sucrase: "^3.20.3",
-	tslib: "^2.4.0",
-	typescript: "^4.6.3"
+var author = "alqmc";
+var bin = {
+	gacm: "gacm.js",
+	gnrm: "gnrm.js"
+};
+var publishConfig = {
+	access: "public"
 };
 var dependencies = {
 	commander: "^9.3.0",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
-	minimist: "^1.2.6",
 	prompts: "^2.4.2"
-};
-var config = {
-	commitizen: {
-		path: "./node_modules/cz-conventional-changelog"
-	}
 };
 var pkg = {
 	name: name,
 	version: version,
+	"private": false,
 	description: description,
-	scripts: scripts,
-	author: author,
+	keywords: keywords,
 	license: license,
-	devDependencies: devDependencies,
-	dependencies: dependencies,
-	config: config
+	author: author,
+	bin: bin,
+	publishConfig: publishConfig,
+	dependencies: dependencies
 };
 
 const useVersion = async (cmd) => {
   if (cmd.version)
-    console.log(pkg.version);
+    console.log(`v${pkg.version}`);
 };
 
 const rootPath = __dirname;
@@ -89,18 +62,17 @@ path.resolve(rootPath, "package");
 const HOME = process.env[process.platform === "win32" ? "USERPROFILE" : "HOME"] || "";
 const registriesPath = path.join(HOME, ".gacmrc");
 
-const PREFIX = "[gacm]:";
 const success = (msg) => console.log(`
-${kolorist.green(PREFIX + msg)}
+${kolorist.green(msg)}
 `);
 const error = (msg) => console.log(`
-${kolorist.red(PREFIX + msg)}
+${kolorist.red(msg)}
 `);
 const warning = (msg) => console.log(`
-${kolorist.yellow(PREFIX + msg)}
+${kolorist.yellow(msg)}
 `);
 const info = (msg) => console.log(`
-${kolorist.blue(PREFIX + msg)}
+${kolorist.blue(msg)}
 `);
 const log = {
   success,
@@ -167,27 +139,6 @@ async function writeFileUser(dir, data) {
   });
 }
 
-const run = (command, dir = process$1.cwd()) => {
-  const [cmd, ...args] = command.split(" ");
-  return new Promise((resolve, reject) => {
-    const app = child_process.spawn(cmd, args, {
-      cwd: dir,
-      stdio: "inherit",
-      shell: process.platform === "win32"
-    });
-    const processExit = () => app.kill("SIGHUP");
-    app.on("close", (code) => {
-      process.removeListener("exit", processExit);
-      if (code === 0)
-        resolve();
-      else
-        reject(new Error(`command failed: 
- command:${cmd} 
- code:${code}`));
-    });
-    process.on("exit", processExit);
-  });
-};
 const execCommand = async (cmd, args) => {
   const res = await execa__default["default"](cmd, args);
   return res.stdout.trim();
@@ -206,32 +157,6 @@ const printMessages = (messages) => {
     console.log(message);
   }
   console.log("\n");
-};
-
-const useLs = async () => {
-  const userList = await getFileUser(registriesPath) || {};
-  const currectUser = await execCommand("git", ["config", "user.name"]);
-  const currectEmail = await execCommand("git", ["config", "user.email"]);
-  if (userList.users.length === 0 && (!currectUser || !currectEmail)) {
-    return log.info("no user");
-  }
-  if (!userList.users.some((x) => x.name === currectUser) && currectUser && currectEmail) {
-    await insertUser(currectUser, currectEmail);
-    log.info(`[found new user]: ${currectUser}`);
-    userList.users.push({
-      name: currectUser,
-      email: currectEmail,
-      alias: currectUser
-    });
-  }
-  const length = Math.max(...userList.users.map((user) => user.alias.length + (user.alias !== user.name ? user.name.length : 0))) + 3;
-  const prefix = "  ";
-  const messages = userList.users.map((user) => {
-    const currect = user.name === currectUser && user.email === currectEmail ? `${kolorist.green("*")}` : "";
-    const isSame = user.alias === user.name;
-    return `${prefix + currect}${isSame ? user.alias : `${user.alias}(${kolorist.gray(user.name)})`}${geneDashLine(user.name, length)}${user.email}`;
-  });
-  printMessages(messages);
 };
 
 const useDelete = async (name) => {
@@ -279,49 +204,123 @@ const useAlias = async (origin, target) => {
   await writeFileUser(registriesPath, userList);
 };
 
+const defaultNpmMirror = [
+  {
+    name: "npm",
+    alias: "npm",
+    home: "https://www.npmjs.org",
+    registry: "https://registry.npmjs.org/"
+  },
+  {
+    name: "yarn",
+    alias: "yarn",
+    home: "https://yarnpkg.com",
+    registry: "https://registry.yarnpkg.com/"
+  },
+  {
+    name: "tencent",
+    alias: "tencent",
+    home: "https://mirrors.cloud.tencent.com/npm/",
+    registry: "https://mirrors.cloud.tencent.com/npm/"
+  },
+  {
+    name: "cnpm",
+    alias: "cnpm",
+    home: "https://cnpmjs.org",
+    registry: "https://r.cnpmjs.org/"
+  },
+  {
+    name: "taobao",
+    alias: "taobao",
+    home: "https://npmmirror.com",
+    registry: "https://registry.npmmirror.com/"
+  },
+  {
+    name: "npmMirror",
+    alias: "npmMirror",
+    home: "https://skimdb.npmjs.com/",
+    registry: "https://skimdb.npmjs.com/registry/"
+  }
+];
+
+const useLs = async (cmd) => {
+  const userConfig = await getFileUser(registriesPath);
+  let registry = defaultNpmMirror;
+  if (userConfig && userConfig.registry)
+    registry = userConfig.registry;
+  let packageManager = "npm";
+  if (cmd.packageManager)
+    packageManager = cmd.packageManager;
+  let currectRegistry = "";
+  try {
+    currectRegistry = await execCommand(packageManager, [
+      "config",
+      "get",
+      "registry"
+    ]);
+  } catch (error) {
+    log.error(`${packageManager} is not found`);
+    return;
+  }
+  const length = Math.max(...registry.map((x) => {
+    return x.alias.length + (x.alias !== x.name ? x.name.length : 0);
+  })) + 3;
+  const prefix = "  ";
+  const messages = registry.map((item) => {
+    const currect = item.registry === currectRegistry ? `${kolorist.green("*")}` : "";
+    const isSame = item.alias === item.name;
+    return `${prefix + currect}${isSame ? item.alias : `${item.alias}(${kolorist.gray(item.name)})`}${geneDashLine(item.name, length)}${item.registry}`;
+  });
+  printMessages(messages);
+};
+
 const useUse = async ([name], cmd) => {
-  const userList = await getFileUser(registriesPath);
-  if (!userList)
-    return log.error(`no user exists`);
-  let useUser = void 0;
+  const userConfig = await getFileUser(registriesPath);
+  let registrylist = defaultNpmMirror;
+  if (userConfig && userConfig.registry)
+    registrylist = userConfig.registry;
+  let useRegistry = void 0;
   if (name) {
-    useUser = userList.users.find((x) => x.alias === name);
+    useRegistry = registrylist.find((x) => x.alias === name);
   } else {
-    const { user } = await prompts__default["default"]({
+    const { registry } = await prompts__default["default"]({
       type: "select",
-      name: "user",
-      message: "Pick a account",
-      choices: userList.users.map((x) => {
+      name: "registry",
+      message: "Pick a registry",
+      choices: registrylist.map((x) => {
         return {
-          title: `${x.alias}${x.alias === x.name ? "" : `(${x.name})`} ${x.email}`,
+          title: `${x.alias}${x.alias === x.name ? "" : `(${x.name})`} ${x.registry}`,
           value: x
         };
       })
     });
-    if (!user) {
+    if (!registry) {
       log.error(`user cancel operation`);
       return;
     }
-    useUser = user;
+    useRegistry = registry;
   }
-  if (!useUser)
+  if (!useRegistry)
     return log.error(`${name} not found`);
-  let env = "local";
-  if (cmd.system)
-    env = "system";
-  if (cmd.global)
-    env = "global";
-  if (cmd.local)
-    env = "local";
-  await run(`git config --${env} user.name ${useUser.name}`);
-  await run(`git config --${env} user.email ${useUser.email}`);
-  log.success(`git user changed [${env}]:${useUser.alias}${useUser.alias !== useUser.name ? `(${useUser.name})` : ""}`);
+  let packageManager = "npm";
+  if (cmd.packageManager)
+    packageManager = cmd.packageManager;
+  await execCommand(packageManager, [
+    "config",
+    "set",
+    "registry",
+    useRegistry.registry
+  ]).catch(() => {
+    log.error(`${packageManager} is not found`);
+    return;
+  });
+  log.success(`${packageManager} registry changed :${useRegistry.alias}${useRegistry.alias !== useRegistry.name ? `(${useRegistry.name})` : ""}`);
 };
 
 const program = new commander.Command();
 program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("\u67E5\u770B\u5F53\u524D\u7248\u672C").action(useVersion);
-program.command("ls").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
-program.command("use [name...]").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").description("\u5207\u6362\u7528\u6237").action(useUse);
+program.command("ls").option("-p, --packageManager <packageManager>", "\u5305\u7BA1\u7406\u5668").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
+program.command("use [name...]").option("-p, --packageManager <packageManager>", "\u5305\u7BA1\u7406\u5668").description("\u5207\u6362\u955C\u50CF\u6E90").action(useUse);
 program.command("add").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").description("\u6DFB\u52A0\u7528\u6237").action(useAdd);
 program.command("alias <origin> <target>").description("\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>").description("\u5220\u9664\u7528\u6237").action(useDelete);

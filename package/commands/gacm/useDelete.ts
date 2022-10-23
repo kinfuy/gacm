@@ -1,6 +1,6 @@
-import { registriesPath } from '../config/path';
-import { getFileUser, writeFileUser } from '../utils/getUserList';
-import { log } from '../utils/log';
+import { registriesPath } from '../../config/path';
+import { getFileUser, writeFileUser } from '../../utils/getUserList';
+import { log } from '../../utils/log';
 
 export const useDelete = async (name: string) => {
   const userList = await getFileUser(registriesPath);
