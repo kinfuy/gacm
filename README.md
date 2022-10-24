@@ -18,17 +18,20 @@
   <br>
 </p>
 
-<p align="center"> Git Account Management Tools</p>
+<p align="center"> Git Account Management Tools & NPM Registry Manager</p>
 
 English | [简体中文](./README-zh_CN.md)
 
 ### Features
 
-- ✨ Seamless switching of GIT account
+- ✨ Seamless switching of GIT account and npm registry
 
 - 🚀Minimalist operation，just like nvm
 
-- 😊 gacm ls Automatically add local git account
+- 😊 gacm ls Automatically add local git account or npm registry
+
+- 👋 gnrm Flexible configuration, pollution-free,distinguish package manager
+
 
 
 ### Getting Started
@@ -43,6 +46,8 @@ npm install gacm -g
 ```
 
 ### Usage
+
+#### switch git account
 
 
 ```shell
@@ -66,6 +71,32 @@ gacm alias xxxx xxxx
 
 ## delete user
 gacm delete user
+
+```
+
+#### switch npm registry
+
+```shell 
+## just like nvm
+
+## View the registry list, and local registry will be automatically added
+gnrm ls [-p xxxx]
+
+
+## Switch npm registry default npm
+gacm use xxx [-p yarn]
+
+gacm use xxx [-p cnpm]
+
+
+## Add registry--alias Optional  define registry alias
+gacm add --name xxx --registry xxx [--alias xxx]
+
+## Define registry alias
+gacm alias xxxx xxxx
+
+## delete registry
+gacm delete xxx
 
 ```
 ### License
