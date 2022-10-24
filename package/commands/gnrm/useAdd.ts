@@ -8,6 +8,6 @@ export interface AddCmd {
 // 相同的情况直接覆盖更新
 export const useAdd = async (cmd: AddCmd) => {
   if (cmd.name && cmd.registry) {
-    await insertRegistry(cmd.name, cmd.registry, cmd.alias);
+    await insertRegistry(cmd.name, cmd.alias, cmd.registry);
   }
 };
