@@ -15,8 +15,74 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 
+var name$1 = "gacm";
+var version$1 = "1.2.0";
+var description$1 = "git account manage";
+var keywords = [
+	"git",
+	"account",
+	"manage"
+];
+var license$1 = "MIT";
+var author$1 = "alqmc";
+var bin = {
+	gacm: "gacm.js",
+	gnrm: "gnrm.js"
+};
+var publishConfig = {
+	access: "public"
+};
+var dependencies$1 = {
+	commander: "^9.3.0",
+	execa: "5.1.1",
+	kolorist: "^1.5.1",
+	prompts: "^2.4.2"
+};
+var pkg$1 = {
+	name: name$1,
+	version: version$1,
+	"private": false,
+	description: description$1,
+	keywords: keywords,
+	license: license$1,
+	author: author$1,
+	bin: bin,
+	publishConfig: publishConfig,
+	dependencies: dependencies$1
+};
+
+const useVersion = async (cmd) => {
+  if (cmd.version)
+    console.log(`v${pkg$1.version}`);
+};
+
+const rootPath = __dirname;
+__dirname;
+path.resolve(rootPath, "package");
+const HOME = process.env[process.platform === "win32" ? "USERPROFILE" : "HOME"] || "";
+const registriesPath = path.join(HOME, ".gacmrc");
+
+const success = (msg) => console.log(`
+${kolorist.green(msg)}
+`);
+const error = (msg) => console.log(`
+${kolorist.red(msg)}
+`);
+const warning = (msg) => console.log(`
+${kolorist.yellow(msg)}
+`);
+const info = (msg) => console.log(`
+${kolorist.blue(msg)}
+`);
+const log = {
+  success,
+  error,
+  warning,
+  info
+};
+
 var name = "gacm";
-var version = "1.1.5";
+var version = "1.2.0";
 var description = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -78,45 +144,18 @@ var pkg = {
 	config: config
 };
 
-const useVersion = async (cmd) => {
-  if (cmd.version)
-    console.log(pkg.version);
-};
-
-const rootPath = __dirname;
-__dirname;
-path.resolve(rootPath, "package");
-const HOME = process.env[process.platform === "win32" ? "USERPROFILE" : "HOME"] || "";
-const registriesPath = path.join(HOME, ".gacmrc");
-
-const PREFIX = "[gacm]:";
-const success = (msg) => console.log(`
-${kolorist.green(PREFIX + msg)}
-`);
-const error = (msg) => console.log(`
-${kolorist.red(PREFIX + msg)}
-`);
-const warning = (msg) => console.log(`
-${kolorist.yellow(PREFIX + msg)}
-`);
-const info = (msg) => console.log(`
-${kolorist.blue(PREFIX + msg)}
-`);
-const log = {
-  success,
-  error,
-  warning,
-  info
-};
-
 const insertUser = async (name, email, alias = name) => {
-  let userList = await getFileUser(registriesPath);
-  if (!userList)
-    userList = { version: "", users: [] };
-  if (!userList.version)
-    userList = transformData(userList);
-  if (isExistAlias(userList.users, alias, name, email)) {
-    userList.users.forEach((user) => {
+  let userConfig = await getFileUser(registriesPath);
+  if (!userConfig)
+    userConfig = {
+      version: pkg.version,
+      users: [],
+      registry: []
+    };
+  if (!userConfig.version)
+    userConfig = transformData(userConfig);
+  if (isExistAlias(userConfig.users, alias, name, email)) {
+    userConfig.users.forEach((user) => {
       if (user.alias === alias || !user.alias && user.name === alias || name && email && user.name === name && user.email === email) {
         user.alias = alias === name ? user.alias ? user.alias : alias : alias;
         user.email = email;
@@ -125,14 +164,14 @@ const insertUser = async (name, email, alias = name) => {
       }
     });
   } else {
-    userList.users.push({
+    userConfig.users.push({
       name,
       email,
       alias
     });
     log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ""}`);
   }
-  await writeFileUser(registriesPath, userList);
+  await writeFileUser(registriesPath, userConfig);
 };
 const transformData = (data) => {
   const userInfo = { version: "", users: [] };
@@ -209,7 +248,7 @@ const printMessages = (messages) => {
 };
 
 const useLs = async () => {
-  const userList = await getFileUser(registriesPath) || {};
+  const userList = await getFileUser(registriesPath) || { version: pkg$1.version, users: [], registry: [] };
   const currectUser = await execCommand("git", ["config", "user.name"]);
   const currectEmail = await execCommand("git", ["config", "user.email"]);
   if (userList.users.length === 0 && (!currectUser || !currectEmail)) {
@@ -227,7 +266,7 @@ const useLs = async () => {
   const length = Math.max(...userList.users.map((user) => user.alias.length + (user.alias !== user.name ? user.name.length : 0))) + 3;
   const prefix = "  ";
   const messages = userList.users.map((user) => {
-    const currect = user.name === currectUser && user.email === currectEmail ? `${kolorist.green("*")}` : "";
+    const currect = user.name === currectUser && user.email === currectEmail ? `${kolorist.green("*")}` : " ";
     const isSame = user.alias === user.name;
     return `${prefix + currect}${isSame ? user.alias : `${user.alias}(${kolorist.gray(user.name)})`}${geneDashLine(user.name, length)}${user.email}`;
   });
@@ -238,8 +277,8 @@ const useDelete = async (name) => {
   const userList = await getFileUser(registriesPath);
   if (!userList)
     return log.error(`no user`);
-  const useUser = userList.users.filter((x) => x.alias === name || !x.alias && x.name === name);
-  if (useUser.length === 0)
+  const useUser = userList.users.find((x) => x.alias === name || !x.alias && x.name === name);
+  if (!useUser)
     return log.error(`${name} not found`);
   for (let i = 0; i < userList.users.length; i++) {
     if (!userList.users[i].alias && userList.users[i].name === name || userList.users[i].alias === name) {

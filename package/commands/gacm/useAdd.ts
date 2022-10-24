@@ -1,4 +1,4 @@
-import { insertUser } from '../utils/helper';
+import { insertUser } from '../../utils/helper';
 
 export interface AddCmd {
   name: string;

@@ -1,9 +1,9 @@
 import prompts from 'prompts';
-import { registriesPath } from '../config/path';
-import { getFileUser } from '../utils/getUserList';
-import { log } from '../utils/log';
-import { run } from '../utils/shell';
-import type { UserInfo } from '../type/shell.type';
+import { registriesPath } from '../../config/path';
+import { getFileUser } from '../../utils/getUserList';
+import { log } from '../../utils/log';
+import { run } from '../../utils/shell';
+import type { UserInfo } from '../../type/shell.type';
 
 export interface UseCmd {
   local?: boolean;

@@ -6,7 +6,7 @@ import {
   useLs,
   useUse,
   useVersion,
-} from './commands';
+} from './commands/gacm';
 
 const program = new Command();
 
