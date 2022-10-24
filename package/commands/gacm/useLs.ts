@@ -5,10 +5,13 @@ import { execCommand } from '../../utils/shell';
 import { log } from '../../utils/log';
 import { geneDashLine, printMessages } from '../../utils/tools';
 import { insertUser } from '../../utils/helper';
+import pkg from '../../package.json';
 import type { UserInfoJson } from '../../type/shell.type';
 
 export const useLs = async () => {
-  const userList = (await getFileUser(registriesPath)) || ({} as UserInfoJson);
+  const userList =
+    (await getFileUser(registriesPath)) ||
+    ({ version: pkg.version, users: [], registry: [] } as UserInfoJson);
 
   const currectUser = await execCommand('git', ['config', 'user.name']);
 
@@ -50,7 +53,7 @@ export const useLs = async () => {
     const currect =
       user.name === currectUser && user.email === currectEmail
         ? `${green('*')}`
-        : '';
+        : ' ';
 
     const isSame = user.alias === user.name;
 

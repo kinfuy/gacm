@@ -50,8 +50,6 @@ export const useUse = async ([name]: string[], cmd: NrmCmd) => {
   });
 
   log.success(
-    `${packageManager} registry changed :${useRegistry.alias}${
-      useRegistry.alias !== useRegistry.name ? `(${useRegistry.name})` : ''
-    }`
+    `${packageManager} registry has been set to:  ${useRegistry.registry}`
   );
 };

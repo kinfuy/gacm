@@ -1,4 +1,5 @@
 import { registriesPath } from '../config/path';
+import pkg from '../../package.json';
 import { getFileUser, writeFileUser } from './getUserList';
 import { log } from './log';
 import type {
@@ -14,13 +15,18 @@ import type {
  * @param alias
  */
 export const insertUser = async (name: string, email: string, alias = name) => {
-  let userList = await getFileUser(registriesPath);
-  if (!userList) userList = { version: '', users: [] } as UserInfoJson;
-  if (!userList.version)
-    userList = transformData(userList as unknown as UserOldInfoJson);
+  let userConfig = await getFileUser(registriesPath);
+  if (!userConfig)
+    userConfig = {
+      version: pkg.version,
+      users: [],
+      registry: [],
+    } as UserInfoJson;
+  if (!userConfig.version)
+    userConfig = transformData(userConfig as unknown as UserOldInfoJson);
 
-  if (isExistAlias(userList.users, alias, name, email)) {
-    userList.users.forEach((user) => {
+  if (isExistAlias(userConfig.users, alias, name, email)) {
+    userConfig.users.forEach((user) => {
       if (
         user.alias === alias ||
         (!user.alias && user.name === alias) ||
@@ -38,7 +44,7 @@ export const insertUser = async (name: string, email: string, alias = name) => {
       }
     });
   } else {
-    userList.users.push({
+    userConfig.users.push({
       name,
       email,
       alias,
@@ -47,7 +53,7 @@ export const insertUser = async (name: string, email: string, alias = name) => {
     log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ''}`);
   }
 
-  await writeFileUser(registriesPath, userList);
+  await writeFileUser(registriesPath, userConfig);
 };
 
 export const transformData = (data: UserOldInfoJson): UserInfoJson => {
@@ -75,4 +81,39 @@ export const isExistAlias = (
       (!x.alias && x.name === alias) ||
       (name && email && x.name === name && x.email === email)
   );
+};
+
+export const insertRegistry = async (
+  name: string,
+  alias: string,
+  registry: string,
+  home?: string
+) => {
+  let userConfig = await getFileUser(registriesPath);
+  if (!userConfig)
+    userConfig = {
+      version: pkg.version,
+      users: [],
+      registry: [],
+    } as UserInfoJson;
+  if (!userConfig.registry) userConfig.registry = [];
+  const isExist = userConfig.registry?.some((x) => x.alias === alias);
+  if (isExist) {
+    userConfig.registry?.forEach((x) => {
+      if (x.alias === alias) {
+        x.alias = alias;
+        x.name = name;
+        x.home = home || '';
+        x.registry = registry;
+      }
+    });
+  } else {
+    userConfig.registry?.push({
+      alias,
+      name,
+      home: home || '',
+      registry,
+    });
+  }
+  await writeFileUser(registriesPath, userConfig);
 };

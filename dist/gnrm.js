@@ -15,16 +15,16 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 
-var name = "gacm";
-var version = "1.1.5";
-var description = "git account manage";
+var name$1 = "gacm";
+var version$1 = "1.1.5";
+var description$1 = "git account manage";
 var keywords = [
 	"git",
 	"account",
 	"manage"
 ];
-var license = "MIT";
-var author = "alqmc";
+var license$1 = "MIT";
+var author$1 = "alqmc";
 var bin = {
 	gacm: "gacm.js",
 	gnrm: "gnrm.js"
@@ -32,28 +32,28 @@ var bin = {
 var publishConfig = {
 	access: "public"
 };
-var dependencies = {
+var dependencies$1 = {
 	commander: "^9.3.0",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
 	prompts: "^2.4.2"
 };
-var pkg = {
-	name: name,
-	version: version,
+var pkg$1 = {
+	name: name$1,
+	version: version$1,
 	"private": false,
-	description: description,
+	description: description$1,
 	keywords: keywords,
-	license: license,
-	author: author,
+	license: license$1,
+	author: author$1,
 	bin: bin,
 	publishConfig: publishConfig,
-	dependencies: dependencies
+	dependencies: dependencies$1
 };
 
 const useVersion = async (cmd) => {
   if (cmd.version)
-    console.log(`v${pkg.version}`);
+    console.log(`v${pkg$1.version}`);
 };
 
 const rootPath = __dirname;
@@ -81,31 +81,69 @@ const log = {
   info
 };
 
-const insertUser = async (name, email, alias = name) => {
-  let userList = await getFileUser(registriesPath);
-  if (!userList)
-    userList = { version: "", users: [] };
-  if (!userList.version)
-    userList = transformData(userList);
-  if (isExistAlias(userList.users, alias, name, email)) {
-    userList.users.forEach((user) => {
-      if (user.alias === alias || !user.alias && user.name === alias || name && email && user.name === name && user.email === email) {
-        user.alias = alias === name ? user.alias ? user.alias : alias : alias;
-        user.email = email;
-        user.name = name;
-        log.success(`[update]:${alias} ${user.alias !== name ? `(${user.name})` : ""}`);
-      }
-    });
-  } else {
-    userList.users.push({
-      name,
-      email,
-      alias
-    });
-    log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ""}`);
-  }
-  await writeFileUser(registriesPath, userList);
+var name = "gacm";
+var version = "1.1.5";
+var description = "gacm";
+var scripts = {
+	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
+	clear: "rimraf dist",
+	link: "cd dist && pnpm link --global",
+	push: "git push gitee master && git push github master",
+	"update:version": "sucrase-node build/utils/version.ts",
+	log: "changeloger",
+	release: "sucrase-node script/release.ts",
+	prepare: "husky install"
 };
+var author = "alqmc";
+var license = "MIT";
+var devDependencies = {
+	"@alqmc/build-ts": "^0.0.8",
+	"@alqmc/build-utils": "^0.0.3",
+	"@alqmc/eslint-config": "0.0.4",
+	"@commitlint/cli": "^8.3.5",
+	"@commitlint/config-angular": "^8.3.4",
+	"@commitlint/config-conventional": "^16.2.1",
+	"@types/fs-extra": "^9.0.13",
+	"@types/gulp": "^4.0.9",
+	"@types/node": "^17.0.21",
+	"@types/prompts": "^2.0.14",
+	changeloger: "0.1.0",
+	commitizen: "^4.1.2",
+	"fs-extra": "^10.1.0",
+	gulp: "^4.0.2",
+	husky: "^8.0.1",
+	"lint-staged": "^10.5.4",
+	prettier: "^2.6.2",
+	prompts: "^2.4.2",
+	rimraf: "^3.0.2",
+	sucrase: "^3.20.3",
+	tslib: "^2.4.0",
+	typescript: "^4.6.3"
+};
+var dependencies = {
+	commander: "^9.3.0",
+	execa: "5.1.1",
+	kolorist: "^1.5.1",
+	minimist: "^1.2.6",
+	prompts: "^2.4.2"
+};
+var config = {
+	commitizen: {
+		path: "./node_modules/cz-conventional-changelog"
+	}
+};
+var pkg = {
+	name: name,
+	version: version,
+	description: description,
+	scripts: scripts,
+	author: author,
+	license: license,
+	devDependencies: devDependencies,
+	dependencies: dependencies,
+	config: config
+};
+
 const transformData = (data) => {
   const userInfo = { version: "", users: [] };
   Object.keys(data).forEach((x) => {
@@ -117,8 +155,35 @@ const transformData = (data) => {
   });
   return userInfo;
 };
-const isExistAlias = (users, alias, name, email) => {
-  return users.some((x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email);
+const insertRegistry = async (name, alias, registry, home) => {
+  let userConfig = await getFileUser(registriesPath);
+  if (!userConfig)
+    userConfig = {
+      version: pkg.version,
+      users: [],
+      registry: []
+    };
+  if (!userConfig.registry)
+    userConfig.registry = [];
+  const isExist = userConfig.registry?.some((x) => x.alias === alias);
+  if (isExist) {
+    userConfig.registry?.forEach((x) => {
+      if (x.alias === alias) {
+        x.alias = alias;
+        x.name = name;
+        x.home = home || "";
+        x.registry = registry;
+      }
+    });
+  } else {
+    userConfig.registry?.push({
+      alias,
+      name,
+      home: home || "",
+      registry
+    });
+  }
+  await writeFileUser(registriesPath, userConfig);
 };
 
 const { readFile, writeFile } = fs.promises;
@@ -157,51 +222,6 @@ const printMessages = (messages) => {
     console.log(message);
   }
   console.log("\n");
-};
-
-const useDelete = async (name) => {
-  const userList = await getFileUser(registriesPath);
-  if (!userList)
-    return log.error(`no user`);
-  const useUser = userList.users.filter((x) => x.alias === name || !x.alias && x.name === name);
-  if (useUser.length === 0)
-    return log.error(`${name} not found`);
-  for (let i = 0; i < userList.users.length; i++) {
-    if (!userList.users[i].alias && userList.users[i].name === name || userList.users[i].alias === name) {
-      log.success(`[delete]: ${userList.users[i].alias}${userList.users[i].alias !== userList.users[i].name ? `(${userList.users[i].name})` : ""}`);
-      userList.users.splice(i, 1);
-    }
-  }
-  await writeFileUser(registriesPath, userList);
-};
-
-const useAdd = async (cmd) => {
-  if (cmd.name && cmd.email) {
-    await insertUser(cmd.name, cmd.email, cmd.alias);
-  }
-};
-
-const useAlias = async (origin, target) => {
-  if (!origin || !target)
-    return;
-  let userList = await getFileUser(registriesPath);
-  if (!userList)
-    userList = { version: "", users: [] };
-  let changed = false;
-  userList.users.forEach((x) => {
-    if (x.alias === origin) {
-      if (userList && !isExistAlias(userList?.users, target)) {
-        x.alias = target;
-        log.success(`[update]: ${origin}=>${x.alias} (${x.name})`);
-      } else {
-        log.error(`${target} is exist, please enter another one `);
-      }
-      changed = true;
-    }
-  });
-  if (!changed)
-    return log.error(`${origin} not found`);
-  await writeFileUser(registriesPath, userList);
 };
 
 const defaultNpmMirror = [
@@ -245,9 +265,14 @@ const defaultNpmMirror = [
 
 const useLs = async (cmd) => {
   const userConfig = await getFileUser(registriesPath);
-  let registry = defaultNpmMirror;
-  if (userConfig && userConfig.registry)
-    registry = userConfig.registry;
+  let registryList = defaultNpmMirror;
+  if (userConfig) {
+    if (!userConfig.registry || userConfig.registry.length === 0) {
+      userConfig.registry = registryList;
+      writeFileUser(registriesPath, userConfig);
+    } else
+      registryList = userConfig.registry;
+  }
   let packageManager = "npm";
   if (cmd.packageManager)
     packageManager = cmd.packageManager;
@@ -262,12 +287,30 @@ const useLs = async (cmd) => {
     log.error(`${packageManager} is not found`);
     return;
   }
-  const length = Math.max(...registry.map((x) => {
+  if (registryList.every((x) => x.registry !== currectRegistry)) {
+    try {
+      const { name } = await prompts__default["default"]({
+        type: "text",
+        name: "name",
+        message: `find new registry:${currectRegistry}, please give it a name`
+      });
+      await insertRegistry(name, name, currectRegistry);
+      log.info(`[found new registry]: ${currectRegistry}`);
+      registryList.push({
+        name,
+        registry: currectRegistry,
+        home: "",
+        alias: name
+      });
+    } catch (error) {
+    }
+  }
+  const length = Math.max(...registryList.map((x) => {
     return x.alias.length + (x.alias !== x.name ? x.name.length : 0);
   })) + 3;
   const prefix = "  ";
-  const messages = registry.map((item) => {
-    const currect = item.registry === currectRegistry ? `${kolorist.green("*")}` : "";
+  const messages = registryList.map((item) => {
+    const currect = item.registry === currectRegistry ? `${kolorist.green("*")}` : " ";
     const isSame = item.alias === item.name;
     return `${prefix + currect}${isSame ? item.alias : `${item.alias}(${kolorist.gray(item.name)})`}${geneDashLine(item.name, length)}${item.registry}`;
   });
@@ -314,14 +357,63 @@ const useUse = async ([name], cmd) => {
     log.error(`${packageManager} is not found`);
     return;
   });
-  log.success(`${packageManager} registry changed :${useRegistry.alias}${useRegistry.alias !== useRegistry.name ? `(${useRegistry.name})` : ""}`);
+  log.success(`${packageManager} registry has been set to:  ${useRegistry.registry}`);
+};
+
+const useAdd = async (cmd) => {
+  if (cmd.name && cmd.registry) {
+    await insertRegistry(cmd.name, cmd.registry, cmd.alias);
+  }
+};
+
+const useAlias = async (origin, target) => {
+  if (!origin || !target)
+    return;
+  let useConfig = await getFileUser(registriesPath);
+  if (!useConfig)
+    useConfig = { version: "", users: [], registry: [] };
+  if (!useConfig.registry)
+    useConfig.registry = [];
+  let changed = false;
+  useConfig.registry?.forEach((x) => {
+    if (x.alias === origin) {
+      if (useConfig && useConfig.registry?.every((x2) => x2.alias !== target)) {
+        x.alias = target;
+        log.success(`[update]: ${origin}=>${x.alias} (${x.name})`);
+      } else {
+        log.error(`${target} is exist, please enter another one `);
+      }
+      changed = true;
+    }
+  });
+  if (!changed)
+    return log.error(`${origin} not found`);
+  await writeFileUser(registriesPath, useConfig);
+};
+
+const useDelete = async (name) => {
+  const userConfig = await getFileUser(registriesPath);
+  if (!userConfig)
+    return log.error(`no registry`);
+  if (!userConfig.registry)
+    return log.error(`no registry`);
+  const useRegistry = userConfig.registry.find((x) => x.alias === name);
+  if (!useRegistry)
+    return log.error(`${name} not found`);
+  for (let i = 0; i < userConfig.registry.length; i++) {
+    if (userConfig.registry[i].alias === name) {
+      log.success(`[delete]: ${userConfig.registry[i].alias}  ${userConfig.registry[i].registry}`);
+      userConfig.registry.splice(i, 1);
+    }
+  }
+  await writeFileUser(registriesPath, userConfig);
 };
 
 const program = new commander.Command();
 program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("\u67E5\u770B\u5F53\u524D\u7248\u672C").action(useVersion);
-program.command("ls").option("-p, --packageManager <packageManager>", "\u5305\u7BA1\u7406\u5668").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
-program.command("use [name...]").option("-p, --packageManager <packageManager>", "\u5305\u7BA1\u7406\u5668").description("\u5207\u6362\u955C\u50CF\u6E90").action(useUse);
-program.command("add").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").description("\u6DFB\u52A0\u7528\u6237").action(useAdd);
-program.command("alias <origin> <target>").description("\u6DFB\u52A0\u522B\u540D").action(useAlias);
-program.command("delete <name>").description("\u5220\u9664\u7528\u6237").action(useDelete);
+program.command("ls").option("-p, --packageManager <packageManager>", "\u67E5\u770B\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
+program.command("use [name...]").option("-p, --packageManager <packageManager>", "\u8BBE\u7F6E\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").description("\u5207\u6362\u955C\u50CF\u6E90").action(useUse);
+program.command("add").option("-n, --name <name>", "\u955C\u50CF\u540D\u79F0").option("-r, --registry <registry>", "\u955C\u50CF\u5730\u5740").option("-a, --alias <alias>", "\u955C\u50CF\u522B\u540D").description("\u6DFB\u52A0\u955C\u50CF").action(useAdd);
+program.command("alias <origin> <target>").description("\u955C\u50CF\u6DFB\u52A0\u522B\u540D").action(useAlias);
+program.command("delete <name>").description("\u5220\u9664\u955C\u50CF").action(useDelete);
 program.parse(process.argv);

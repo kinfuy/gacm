@@ -7,11 +7,11 @@ export const useDelete = async (name: string) => {
 
   if (!userList) return log.error(`no user`);
 
-  const useUser = userList.users.filter(
+  const useUser = userList.users.find(
     (x) => x.alias === name || (!x.alias && x.name === name)
   );
 
-  if (useUser.length === 0) return log.error(`${name} not found`);
+  if (!useUser) return log.error(`${name} not found`);
 
   for (let i = 0; i < userList.users.length; i++) {
     if (
