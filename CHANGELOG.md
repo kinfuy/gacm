@@ -1,3 +1,10 @@
+# [v1.2.0](https://github.com/alqmc/gacm/compare/v1.1.5...v1.2.0)（2022-10-24）
+
+
+## What's Changed
+  - Feat: gnrm ls and gnrm use ([20afc0c](https://github.com/alqmc/gacm/commit/20afc0c))
+  - Feat: gnrm add、gnrm alias、gnrm delete ([9f28df6](https://github.com/alqmc/gacm/commit/9f28df6))
+  - Docs: readme update ([1f71b1e](https://github.com/alqmc/gacm/commit/1f71b1e))
 # [v1.1.5](https://github.com/alqmc/gacm/compare/v1.1.3...v1.1.5)（2022-10-21）
 
 
