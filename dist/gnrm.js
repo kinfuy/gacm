@@ -16,7 +16,7 @@ var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 
 var name$1 = "gacm";
-var version$1 = "1.2.1";
+var version$1 = "1.2.2";
 var description$1 = "git account manage";
 var keywords = [
 	"git",
@@ -82,7 +82,7 @@ const log = {
 };
 
 var name = "gacm";
-var version = "1.2.1";
+var version = "1.2.2";
 var description = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -317,26 +317,42 @@ const useLs = async (cmd) => {
   printMessages(messages);
 };
 
+const defaultPackageManager = ["npm", "yarn", "npm", "pnpm"];
 const useUse = async ([name], cmd) => {
   const userConfig = await getFileUser(registriesPath);
   let registrylist = defaultNpmMirror;
+  let packageManager = "npm";
   if (userConfig && userConfig.registry)
     registrylist = userConfig.registry;
   let useRegistry = void 0;
   if (name) {
     useRegistry = registrylist.find((x) => x.alias === name);
   } else {
-    const { registry } = await prompts__default["default"]({
-      type: "select",
-      name: "registry",
-      message: "Pick a registry",
-      choices: registrylist.map((x) => {
-        return {
-          title: `${x.alias}${x.alias === x.name ? "" : `(${x.name})`} ${x.registry}`,
+    const { registry, pkg } = await prompts__default["default"]([
+      {
+        type: "select",
+        name: "registry",
+        message: "Pick a registry",
+        choices: registrylist.map((x) => {
+          return {
+            title: `${x.alias}${x.alias === x.name ? "" : `(${x.name})`} ${x.registry}`,
+            value: x
+          };
+        })
+      },
+      {
+        type: "select",
+        name: "pkg",
+        message: "Pick a packageManager,and you will set registry for it",
+        initial: 0,
+        choices: defaultPackageManager.map((x) => ({
+          title: x,
           value: x
-        };
-      })
-    });
+        }))
+      }
+    ]);
+    if (pkg)
+      packageManager = pkg;
     if (!registry) {
       log.error(`user cancel operation`);
       return;
@@ -345,7 +361,6 @@ const useUse = async ([name], cmd) => {
   }
   if (!useRegistry)
     return log.error(`${name} not found`);
-  let packageManager = "npm";
   if (cmd.packageManager)
     packageManager = cmd.packageManager;
   await execCommand(packageManager, [
