@@ -15,7 +15,7 @@ const main = async () => {
     await run('pnpm', ['log']);
     await run('git', ['add', '.']);
     await run('git', ['commit', '-m', `release: v${tag}`]);
-    await run('git', ['push', 'github', 'dev']);
+    await run('git', ['push', 'github', 'master']);
     await run('git', ['push', 'github', `v${tag}`]);
   } catch (error) {
     process.exit(0);

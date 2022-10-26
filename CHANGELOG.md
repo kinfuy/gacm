@@ -1,3 +1,8 @@
+# [v1.2.2](https://github.com/alqmc/gacm/compare/v1.2.1...v1.2.2)（2022-10-26）
+
+
+## What's Changed
+  - Feat: gnrm use can selete package ([#16](https://github.com/alqmc/gacm/pull/#16))
 # [v1.2.1](https://github.com/alqmc/gacm/compare/v1.2.0...v1.2.1)（2022-10-24）
 
 
