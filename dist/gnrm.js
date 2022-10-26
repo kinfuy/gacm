@@ -16,7 +16,7 @@ var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 
 var name$1 = "gacm";
-var version$1 = "1.2.0";
+var version$1 = "1.2.2";
 var description$1 = "git account manage";
 var keywords = [
 	"git",
@@ -82,7 +82,7 @@ const log = {
 };
 
 var name = "gacm";
-var version = "1.2.0";
+var version = "1.2.2";
 var description = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -377,7 +377,7 @@ const useUse = async ([name], cmd) => {
 
 const useAdd = async (cmd) => {
   if (cmd.name && cmd.registry) {
-    await insertRegistry(cmd.name, cmd.registry, cmd.alias);
+    await insertRegistry(cmd.name, cmd.alias, cmd.registry);
   }
 };
 
