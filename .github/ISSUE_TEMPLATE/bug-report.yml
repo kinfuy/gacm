@@ -15,8 +15,6 @@ body:
         ### **Check if the issue is reproducible with the latest stable version.**
         You can use the command `pnpm view gacm versions` to view it
       placeholder: latest
-    validations:
-      required: true
   - type: textarea
     id: reproduce
     attributes:
@@ -24,7 +22,6 @@ body:
       description: |
         **After the replay is turned on, what actions do we need to perform to make the bug appear? Simple and clear steps can help us locate the problem more quickly. Please clearly describe the steps of reproducing the issue. Issues without clear reproducing steps will not be repaired. If the issue marked with 'need reproduction' does not provide relevant steps within 7 days, it will be closed directly.**
       placeholder: Please Input
-    validations:
   - type: textarea
     id: expected
     attributes:
