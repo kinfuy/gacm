@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="300px" src="./package/assets/git.svg">
+  <img width="300px" src="./package/assets/icon.png">
 </p>
 
 <p align="center">
@@ -24,7 +24,7 @@
 
 ### Features
 
-- ✨ git账户与npm registry管理工具（ 无缝切换
+- ✨ git账户与npm registry管理工具（无缝切换）
 
 - 🚀 极简的操作方式，just like nvm
 
