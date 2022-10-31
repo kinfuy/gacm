@@ -11,8 +11,8 @@ specifiers:
   '@types/gulp': ^4.0.9
   '@types/node': ^17.0.21
   '@types/prompts': ^2.0.14
+  cac: ^6.7.14
   changeloger: 0.1.0
-  commander: ^9.3.0
   commitizen: ^4.1.2
   execa: 5.1.1
   fs-extra: ^10.1.0
@@ -29,7 +29,7 @@ specifiers:
   typescript: ^4.6.3
 
 dependencies:
-  commander: 9.3.0
+  cac: 6.7.14
   execa: 5.1.1
   kolorist: 1.5.1
   minimist: 1.2.6
@@ -1250,6 +1250,11 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /cac/6.7.14:
+    resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
+    engines: {node: '>=8'}
+    dev: false
+
   /cache-base/1.0.1:
     resolution: {integrity: sha512-AKcdTnFSWATd5/GCPRxr2ChwIJ85CeyrEyjRHlKxQ56d4XJMGym0uAiKn0xbLOGOl3+yRpOTi484dVCEc5AUzQ==}
     engines: {node: '>=0.10.0'}
@@ -1561,11 +1566,6 @@ packages:
     resolution: {integrity: sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==}
     engines: {node: '>= 6'}
     dev: true
-
-  /commander/9.3.0:
-    resolution: {integrity: sha512-hv95iU5uXPbK83mjrJKuZyFM/LBAoCV/XhVGkS5Je6tl7sxr6A0ITMw5WoRV46/UaJ46Nllm3Xt7IaJhXTIkzw==}
-    engines: {node: ^12.20.0 || >=14}
-    dev: false
 
   /commitizen/4.2.4:
     resolution: {integrity: sha512-LlZChbDzg3Ir3O2S7jSo/cgWp5/QwylQVr59K4xayVq8S4/RdKzSyJkghAiZZHfhh5t4pxunUoyeg0ml1q/7aw==}
