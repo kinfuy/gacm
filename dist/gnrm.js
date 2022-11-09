@@ -1,19 +1,20 @@
 #!/usr/bin/env node
 'use strict';
 
-var commander = require('commander');
+var cac = require('cac');
 var kolorist = require('kolorist');
+var prompts = require('prompts');
 var path = require('path');
 var fs = require('fs');
 require('child_process');
 require('process');
 var execa = require('execa');
-var prompts = require('prompts');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
+var cac__default = /*#__PURE__*/_interopDefaultLegacy(cac);
 var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
+var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name$1 = "gacm";
 var version$1 = "1.2.2";
@@ -33,7 +34,7 @@ var publishConfig = {
 	access: "public"
 };
 var dependencies$1 = {
-	commander: "^9.3.0",
+	cac: "^6.7.14",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
 	prompts: "^2.4.2"
@@ -51,9 +52,8 @@ var pkg$1 = {
 	dependencies: dependencies$1
 };
 
-const useVersion = async (cmd) => {
-  if (cmd.version)
-    console.log(`v${pkg$1.version}`);
+const useVersion = () => {
+  return pkg$1.version;
 };
 
 const rootPath = __dirname;
@@ -121,16 +121,11 @@ var devDependencies = {
 	typescript: "^4.6.3"
 };
 var dependencies = {
-	commander: "^9.3.0",
+	cac: "^6.7.14",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
 	minimist: "^1.2.6",
 	prompts: "^2.4.2"
-};
-var config = {
-	commitizen: {
-		path: "./node_modules/cz-conventional-changelog"
-	}
 };
 var pkg = {
 	name: name,
@@ -140,8 +135,7 @@ var pkg = {
 	author: author,
 	license: license,
 	devDependencies: devDependencies,
-	dependencies: dependencies,
-	config: config
+	dependencies: dependencies
 };
 
 const transformData = (data) => {
@@ -175,6 +169,7 @@ const insertRegistry = async (name, alias, registry, home) => {
         x.registry = registry;
       }
     });
+    log.success(`[update]:${alias} ${alias !== name ? `(${name})` : ""} registry ${registry}`);
   } else {
     userConfig.registry?.push({
       alias,
@@ -182,6 +177,7 @@ const insertRegistry = async (name, alias, registry, home) => {
       home: home || "",
       registry
     });
+    log.success(`[add]:${alias} ${alias !== name ? `(${name})` : ""} registry ${registry}`);
   }
   await writeFileUser(registriesPath, userConfig);
 };
@@ -203,26 +199,6 @@ async function writeFileUser(dir, data) {
     process.exit(0);
   });
 }
-
-const execCommand = async (cmd, args) => {
-  const res = await execa__default["default"](cmd, args);
-  return res.stdout.trim();
-};
-
-const geneDashLine = (message, length) => {
-  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
-  return padding(kolorist.white(finalMessage));
-};
-const padding = (message = "", before = 1, after = 1) => {
-  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
-};
-const printMessages = (messages) => {
-  console.log("\n");
-  for (const message of messages) {
-    console.log(message);
-  }
-  console.log("\n");
-};
 
 const defaultNpmMirror = [
   {
@@ -262,6 +238,26 @@ const defaultNpmMirror = [
     registry: "https://skimdb.npmjs.com/registry/"
   }
 ];
+
+const execCommand = async (cmd, args) => {
+  const res = await execa__default["default"](cmd, args);
+  return res.stdout.trim();
+};
+
+const geneDashLine = (message, length) => {
+  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
+  return padding(kolorist.white(finalMessage));
+};
+const padding = (message = "", before = 1, after = 1) => {
+  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
+};
+const printMessages = (messages) => {
+  console.log("\n");
+  for (const message of messages) {
+    console.log(message);
+  }
+  console.log("\n");
+};
 
 const useLs = async (cmd) => {
   const userConfig = await getFileUser(registriesPath);
@@ -318,7 +314,7 @@ const useLs = async (cmd) => {
 };
 
 const defaultPackageManager = ["npm", "yarn", "npm", "pnpm"];
-const useUse = async ([name], cmd) => {
+const useUse = async (name, cmd) => {
   const userConfig = await getFileUser(registriesPath);
   let registrylist = defaultNpmMirror;
   let packageManager = "npm";
@@ -377,7 +373,8 @@ const useUse = async ([name], cmd) => {
 
 const useAdd = async (cmd) => {
   if (cmd.name && cmd.registry) {
-    await insertRegistry(cmd.name, cmd.alias, cmd.registry);
+    const alias = cmd.alias || cmd.name;
+    await insertRegistry(cmd.name, alias, cmd.registry);
   }
 };
 
@@ -424,11 +421,11 @@ const useDelete = async (name) => {
   await writeFileUser(registriesPath, userConfig);
 };
 
-const program = new commander.Command();
-program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("\u67E5\u770B\u5F53\u524D\u7248\u672C").action(useVersion);
-program.command("ls").option("-p, --packageManager <packageManager>", "\u67E5\u770B\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
-program.command("use [name...]").option("-p, --packageManager <packageManager>", "\u8BBE\u7F6E\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").description("\u5207\u6362\u955C\u50CF\u6E90").action(useUse);
-program.command("add").option("-n, --name <name>", "\u955C\u50CF\u540D\u79F0").option("-r, --registry <registry>", "\u955C\u50CF\u5730\u5740").option("-a, --alias <alias>", "\u955C\u50CF\u522B\u540D").description("\u6DFB\u52A0\u955C\u50CF").action(useAdd);
-program.command("alias <origin> <target>").description("\u955C\u50CF\u6DFB\u52A0\u522B\u540D").action(useAlias);
-program.command("delete <name>").description("\u5220\u9664\u955C\u50CF").action(useDelete);
+const program = cac__default["default"]("gnrm");
+program.version(useVersion());
+program.command("ls", "\u5F53\u524D\u7528\u6237\u5217\u8868").option("-p, --packageManager <packageManager>", "\u67E5\u770B\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useLs);
+program.command("use <name>", "\u5207\u6362\u955C\u50CF\u6E90").option("-p, --packageManager <packageManager>", "\u8BBE\u7F6E\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useUse);
+program.command("add", "\u6DFB\u52A0\u955C\u50CF").option("-n, --name <name>", "\u955C\u50CF\u540D\u79F0").option("-r, --registry <registry>", "\u955C\u50CF\u5730\u5740").option("-a, --alias <alias>", "\u955C\u50CF\u522B\u540D").action(useAdd);
+program.command("alias <origin> <target>", "\u955C\u50CF\u6DFB\u52A0\u522B\u540D").action(useAlias);
+program.command("delete <name>", "\u5220\u9664\u955C\u50CF").action(useDelete);
 program.parse(process.argv);

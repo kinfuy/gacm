@@ -8,7 +8,7 @@ import type { NrmCmd, RegistryInfo } from '../../type/shell.type';
 
 const defaultPackageManager = ['npm', 'yarn', 'npm', 'pnpm'];
 
-export const useUse = async ([name]: string[], cmd: NrmCmd) => {
+export const useUse = async (name: string, cmd: NrmCmd) => {
   const userConfig = await getFileUser(registriesPath);
   let registrylist = defaultNpmMirror;
   let packageManager = 'npm';

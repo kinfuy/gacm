@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var commander = require('commander');
+var cac = require('cac');
 var kolorist = require('kolorist');
 var path = require('path');
 var fs = require('fs');
@@ -12,49 +12,9 @@ var prompts = require('prompts');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
+var cac__default = /*#__PURE__*/_interopDefaultLegacy(cac);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
-
-var name$1 = "gacm";
-var version$1 = "1.2.2";
-var description$1 = "git account manage";
-var keywords = [
-	"git",
-	"account",
-	"manage"
-];
-var license$1 = "MIT";
-var author$1 = "alqmc";
-var bin = {
-	gacm: "gacm.js",
-	gnrm: "gnrm.js"
-};
-var publishConfig = {
-	access: "public"
-};
-var dependencies$1 = {
-	commander: "^9.3.0",
-	execa: "5.1.1",
-	kolorist: "^1.5.1",
-	prompts: "^2.4.2"
-};
-var pkg$1 = {
-	name: name$1,
-	version: version$1,
-	"private": false,
-	description: description$1,
-	keywords: keywords,
-	license: license$1,
-	author: author$1,
-	bin: bin,
-	publishConfig: publishConfig,
-	dependencies: dependencies$1
-};
-
-const useVersion = async (cmd) => {
-  if (cmd.version)
-    console.log(`v${pkg$1.version}`);
-};
 
 const rootPath = __dirname;
 __dirname;
@@ -81,9 +41,9 @@ const log = {
   info
 };
 
-var name = "gacm";
-var version = "1.2.2";
-var description = "gacm";
+var name$1 = "gacm";
+var version$1 = "1.2.2";
+var description$1 = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
 	clear: "rimraf dist",
@@ -94,8 +54,8 @@ var scripts = {
 	release: "sucrase-node script/release.ts",
 	prepare: "husky install"
 };
-var author = "alqmc";
-var license = "MIT";
+var author$1 = "alqmc";
+var license$1 = "MIT";
 var devDependencies = {
 	"@alqmc/build-ts": "^0.0.8",
 	"@alqmc/build-utils": "^0.0.3",
@@ -120,35 +80,29 @@ var devDependencies = {
 	tslib: "^2.4.0",
 	typescript: "^4.6.3"
 };
-var dependencies = {
-	commander: "^9.3.0",
+var dependencies$1 = {
+	cac: "^6.7.14",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
 	minimist: "^1.2.6",
 	prompts: "^2.4.2"
 };
-var config = {
-	commitizen: {
-		path: "./node_modules/cz-conventional-changelog"
-	}
-};
-var pkg = {
-	name: name,
-	version: version,
-	description: description,
+var pkg$1 = {
+	name: name$1,
+	version: version$1,
+	description: description$1,
 	scripts: scripts,
-	author: author,
-	license: license,
+	author: author$1,
+	license: license$1,
 	devDependencies: devDependencies,
-	dependencies: dependencies,
-	config: config
+	dependencies: dependencies$1
 };
 
 const insertUser = async (name, email, alias = name) => {
   let userConfig = await getFileUser(registriesPath);
   if (!userConfig)
     userConfig = {
-      version: pkg.version,
+      version: pkg$1.version,
       users: [],
       registry: []
     };
@@ -247,8 +201,44 @@ const printMessages = (messages) => {
   console.log("\n");
 };
 
+var name = "gacm";
+var version = "1.2.2";
+var description = "git account manage";
+var keywords = [
+	"git",
+	"account",
+	"manage"
+];
+var license = "MIT";
+var author = "alqmc";
+var bin = {
+	gacm: "gacm.js",
+	gnrm: "gnrm.js"
+};
+var publishConfig = {
+	access: "public"
+};
+var dependencies = {
+	cac: "^6.7.14",
+	execa: "5.1.1",
+	kolorist: "^1.5.1",
+	prompts: "^2.4.2"
+};
+var pkg = {
+	name: name,
+	version: version,
+	"private": false,
+	description: description,
+	keywords: keywords,
+	license: license,
+	author: author,
+	bin: bin,
+	publishConfig: publishConfig,
+	dependencies: dependencies
+};
+
 const useLs = async () => {
-  const userList = await getFileUser(registriesPath) || { version: pkg$1.version, users: [], registry: [] };
+  const userList = await getFileUser(registriesPath) || { version: pkg.version, users: [], registry: [] };
   const currectUser = await execCommand("git", ["config", "user.name"]);
   const currectEmail = await execCommand("git", ["config", "user.email"]);
   if (userList.users.length === 0 && (!currectUser || !currectEmail)) {
@@ -357,11 +347,15 @@ const useUse = async ([name], cmd) => {
   log.success(`git user changed [${env}]:${useUser.alias}${useUser.alias !== useUser.name ? `(${useUser.name})` : ""}`);
 };
 
-const program = new commander.Command();
-program.option("-v, --version", "\u67E5\u770B\u5F53\u524D\u7248\u672C").usage("command <option>").description("\u67E5\u770B\u5F53\u524D\u7248\u672C").action(useVersion);
-program.command("ls").description("\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
-program.command("use [name...]").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").description("\u5207\u6362\u7528\u6237").action(useUse);
-program.command("add").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").description("\u6DFB\u52A0\u7528\u6237").action(useAdd);
-program.command("alias <origin> <target>").description("\u6DFB\u52A0\u522B\u540D").action(useAlias);
-program.command("delete <name>").description("\u5220\u9664\u7528\u6237").action(useDelete);
+const useVersion = () => {
+  return pkg.version;
+};
+
+const program = cac__default["default"]("gacm");
+program.version(useVersion());
+program.command("ls", "\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
+program.command("use <name>", "\u5207\u6362\u7528\u6237").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").action(useUse);
+program.command("add", "\u6DFB\u52A0\u7528\u6237").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").action(useAdd);
+program.command("alias <origin> <target>", "\u6DFB\u52A0\u522B\u540D").action(useAlias);
+program.command("delete <name>", "\u5220\u9664\u7528\u6237").action(useDelete);
 program.parse(process.argv);

@@ -107,6 +107,11 @@ export const insertRegistry = async (
         x.registry = registry;
       }
     });
+    log.success(
+      `[update]:${alias} ${
+        alias !== name ? `(${name})` : ''
+      } registry ${registry}`
+    );
   } else {
     userConfig.registry?.push({
       alias,
@@ -114,6 +119,9 @@ export const insertRegistry = async (
       home: home || '',
       registry,
     });
+    log.success(
+      `[add]:${alias} ${alias !== name ? `(${name})` : ''} registry ${registry}`
+    );
   }
   await writeFileUser(registriesPath, userConfig);
 };
