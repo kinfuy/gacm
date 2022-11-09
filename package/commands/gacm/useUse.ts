@@ -11,7 +11,7 @@ export interface UseCmd {
   system?: boolean;
 }
 
-export const useUse = async ([name]: string[], cmd: UseCmd) => {
+export const useUse = async (name: string, cmd: UseCmd) => {
   const userList = await getFileUser(registriesPath);
 
   if (!userList) return log.error(`no user exists`);

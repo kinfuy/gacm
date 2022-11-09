@@ -17,7 +17,7 @@ var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name$1 = "gacm";
-var version$1 = "1.2.2";
+var version$1 = "1.2.3";
 var description$1 = "git account manage";
 var keywords = [
 	"git",
@@ -82,7 +82,7 @@ const log = {
 };
 
 var name = "gacm";
-var version = "1.2.2";
+var version = "1.2.3";
 var description = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",

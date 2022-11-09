@@ -42,7 +42,7 @@ const log = {
 };
 
 var name$1 = "gacm";
-var version$1 = "1.2.2";
+var version$1 = "1.2.3";
 var description$1 = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -202,7 +202,7 @@ const printMessages = (messages) => {
 };
 
 var name = "gacm";
-var version = "1.2.2";
+var version = "1.2.3";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -308,7 +308,7 @@ const useAlias = async (origin, target) => {
   await writeFileUser(registriesPath, userList);
 };
 
-const useUse = async ([name], cmd) => {
+const useUse = async (name, cmd) => {
   const userList = await getFileUser(registriesPath);
   if (!userList)
     return log.error(`no user exists`);
