@@ -1,3 +1,8 @@
+# [v1.2.4](https://github.com/alqmc/gacm/compare/v1.2.3...v1.2.4)（2022-11-11）
+
+
+## What's Changed
+  - Fix: gacm gnrm use no args error ([90a3cb6](https://github.com/alqmc/gacm/commit/90a3cb6))
 # [v1.2.3](https://github.com/alqmc/gacm/compare/v1.2.2...v1.2.3)（2022-11-09）
 
 
