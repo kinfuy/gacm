@@ -1,3 +1,10 @@
+# [v1.2.3](https://github.com/alqmc/gacm/compare/v1.2.2...v1.2.3)（2022-11-09）
+
+
+## What's Changed
+  - Feat: new logo ([05c20ad](https://github.com/alqmc/gacm/commit/05c20ad))
+  - Fix: gacm use not work ([5178486](https://github.com/alqmc/gacm/commit/5178486))
+  - Refactor: use cac ([7fda76b](https://github.com/alqmc/gacm/commit/7fda76b))
 # [v1.2.2](https://github.com/alqmc/gacm/compare/v1.2.1...v1.2.2)（2022-10-26）
 
 
