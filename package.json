@@ -1,6 +1,6 @@
 {
   "name": "gacm",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "gacm",
   "scripts": {
     "build": "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -25,6 +25,7 @@
     "@types/gulp": "^4.0.9",
     "@types/node": "^17.0.21",
     "@types/prompts": "^2.0.14",
+    "cac": "^6.7.14",
     "changeloger": "0.1.0",
     "commitizen": "^4.1.2",
     "fs-extra": "^10.1.0",
@@ -39,7 +40,6 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "cac": "^6.7.14",
     "execa": "5.1.1",
     "kolorist": "^1.5.1",
     "minimist": "^1.2.6",

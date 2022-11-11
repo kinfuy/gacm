@@ -42,7 +42,7 @@ const log = {
 };
 
 var name$1 = "gacm";
-var version$1 = "1.2.3";
+var version$1 = "1.2.4";
 var description$1 = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -67,6 +67,7 @@ var devDependencies = {
 	"@types/gulp": "^4.0.9",
 	"@types/node": "^17.0.21",
 	"@types/prompts": "^2.0.14",
+	cac: "^6.7.14",
 	changeloger: "0.1.0",
 	commitizen: "^4.1.2",
 	"fs-extra": "^10.1.0",
@@ -81,7 +82,6 @@ var devDependencies = {
 	typescript: "^4.6.3"
 };
 var dependencies$1 = {
-	cac: "^6.7.14",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
 	minimist: "^1.2.6",
@@ -202,7 +202,7 @@ const printMessages = (messages) => {
 };
 
 var name = "gacm";
-var version = "1.2.3";
+var version = "1.2.4";
 var description = "git account manage";
 var keywords = [
 	"git",
@@ -354,7 +354,7 @@ const useVersion = () => {
 const program = cac__default["default"]("gacm");
 program.version(useVersion());
 program.command("ls", "\u5F53\u524D\u7528\u6237\u5217\u8868").action(useLs);
-program.command("use <name>", "\u5207\u6362\u7528\u6237").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").action(useUse);
+program.command("use [name]", "\u5207\u6362\u7528\u6237").option("-l, --local", "\u5F53\u524D\u7528\u6237").option("-g, --global", "\u5168\u5C40\u7528\u6237").option("-s, --system", "\u7CFB\u7EDF\u7528\u6237").action(useUse);
 program.command("add", "\u6DFB\u52A0\u7528\u6237").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").action(useAdd);
 program.command("alias <origin> <target>", "\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>", "\u5220\u9664\u7528\u6237").action(useDelete);

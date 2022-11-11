@@ -17,7 +17,7 @@ var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name$1 = "gacm";
-var version$1 = "1.2.3";
+var version$1 = "1.2.4";
 var description$1 = "git account manage";
 var keywords = [
 	"git",
@@ -82,7 +82,7 @@ const log = {
 };
 
 var name = "gacm";
-var version = "1.2.3";
+var version = "1.2.4";
 var description = "gacm";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
@@ -107,6 +107,7 @@ var devDependencies = {
 	"@types/gulp": "^4.0.9",
 	"@types/node": "^17.0.21",
 	"@types/prompts": "^2.0.14",
+	cac: "^6.7.14",
 	changeloger: "0.1.0",
 	commitizen: "^4.1.2",
 	"fs-extra": "^10.1.0",
@@ -121,7 +122,6 @@ var devDependencies = {
 	typescript: "^4.6.3"
 };
 var dependencies = {
-	cac: "^6.7.14",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
 	minimist: "^1.2.6",
@@ -424,7 +424,7 @@ const useDelete = async (name) => {
 const program = cac__default["default"]("gnrm");
 program.version(useVersion());
 program.command("ls", "\u5F53\u524D\u7528\u6237\u5217\u8868").option("-p, --packageManager <packageManager>", "\u67E5\u770B\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useLs);
-program.command("use <name>", "\u5207\u6362\u955C\u50CF\u6E90").option("-p, --packageManager <packageManager>", "\u8BBE\u7F6E\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useUse);
+program.command("use [name]", "\u5207\u6362\u955C\u50CF\u6E90").option("-p, --packageManager <packageManager>", "\u8BBE\u7F6E\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useUse);
 program.command("add", "\u6DFB\u52A0\u955C\u50CF").option("-n, --name <name>", "\u955C\u50CF\u540D\u79F0").option("-r, --registry <registry>", "\u955C\u50CF\u5730\u5740").option("-a, --alias <alias>", "\u955C\u50CF\u522B\u540D").action(useAdd);
 program.command("alias <origin> <target>", "\u955C\u50CF\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>", "\u5220\u9664\u955C\u50CF").action(useDelete);

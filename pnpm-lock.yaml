@@ -29,7 +29,6 @@ specifiers:
   typescript: ^4.6.3
 
 dependencies:
-  cac: 6.7.14
   execa: 5.1.1
   kolorist: 1.5.1
   minimist: 1.2.6
@@ -46,6 +45,7 @@ devDependencies:
   '@types/gulp': 4.0.9
   '@types/node': 17.0.27
   '@types/prompts': 2.0.14
+  cac: 6.7.14
   changeloger: 0.1.0
   commitizen: 4.2.4
   fs-extra: 10.1.0
@@ -1253,7 +1253,7 @@ packages:
   /cac/6.7.14:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
     engines: {node: '>=8'}
-    dev: false
+    dev: true
 
   /cache-base/1.0.1:
     resolution: {integrity: sha512-AKcdTnFSWATd5/GCPRxr2ChwIJ85CeyrEyjRHlKxQ56d4XJMGym0uAiKn0xbLOGOl3+yRpOTi484dVCEc5AUzQ==}

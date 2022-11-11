@@ -9,7 +9,7 @@ program.version(useVersion());
 program.command('ls', '当前用户列表').action(useLs);
 
 program
-  .command('use <name>', '切换用户')
+  .command('use [name]', '切换用户')
   .option('-l, --local', '当前用户')
   .option('-g, --global', '全局用户')
   .option('-s, --system', '系统用户')

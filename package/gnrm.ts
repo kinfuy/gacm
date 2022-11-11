@@ -11,7 +11,7 @@ program
   .action(useLs);
 
 program
-  .command('use <name>', '切换镜像源')
+  .command('use [name]', '切换镜像源')
   .option('-p, --packageManager <packageManager>', '设置对应包管理器：默认npm')
   .action(useUse);
 
