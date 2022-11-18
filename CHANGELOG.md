@@ -1,3 +1,8 @@
+# [v1.2.5](https://github.com/alqmc/gacm/compare/v1.2.4...v1.2.5)（2022-11-18）
+
+
+## What's Changed
+  - Fix: gacm ls nouser error ([#21](https://github.com/alqmc/gacm/pull/#21))
 # [v1.2.4](https://github.com/alqmc/gacm/compare/v1.2.3...v1.2.4)（2022-11-11）
 
 
