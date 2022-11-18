@@ -13,9 +13,13 @@ export const useLs = async () => {
     (await getFileUser(registriesPath)) ||
     ({ version: pkg.version, users: [], registry: [] } as UserInfoJson);
 
-  const currectUser = await execCommand('git', ['config', 'user.name']);
+  const currectUser = await execCommand('git', ['config', 'user.name']).catch(
+    () => {}
+  );
 
-  const currectEmail = await execCommand('git', ['config', 'user.email']);
+  const currectEmail = await execCommand('git', ['config', 'user.email']).catch(
+    () => {}
+  );
 
   if (userList.users.length === 0 && (!currectUser || !currectEmail)) {
     return log.info('no user');
