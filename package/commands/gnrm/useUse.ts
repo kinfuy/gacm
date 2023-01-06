@@ -6,7 +6,7 @@ import { log } from '../../utils/log';
 import { execCommand } from '../../utils/shell';
 import type { NrmCmd, RegistryInfo } from '../../type/shell.type';
 
-const defaultPackageManager = ['npm', 'yarn', 'npm', 'pnpm'];
+const defaultPackageManager = ['npm', 'yarn', 'cnpm', 'pnpm'];
 
 export const useUse = async (name: string, cmd: NrmCmd) => {
   const userConfig = await getFileUser(registriesPath);
