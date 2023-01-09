@@ -101,7 +101,7 @@ gacm delete xxx
 
 ### License
 
-MIT License © 2022 [阿乐去买菜（alqmc）](https://github.com/alqmc)
+MIT License © 2022 [阿乐去买菜（kinfuy）](https://github.com/kinfuy)
 
 
 
