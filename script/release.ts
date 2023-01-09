@@ -8,7 +8,7 @@ const main = async () => {
   const { tag } = await prompts({
     type: 'text',
     name: 'tag',
-    message: '发布的版本',
+    message: '发布的版本'
   });
   try {
     await run('git', ['tag', `v${tag}`]);
@@ -17,7 +17,8 @@ const main = async () => {
     await run('git', ['commit', '-m', `release: v${tag}`]);
     await run('git', ['push', 'github', 'master']);
     await run('git', ['push', 'github', `v${tag}`]);
-  } catch (error) {
+  }
+  catch (error) {
     process.exit(0);
   }
 };

@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { buildTypescriptLib } from '@alqmc/build-ts';
-import { enterPath, outputPath, rootPath } from './utils/path';
 import type { DefineLibConfig } from '@alqmc/build-ts';
+import { enterPath, outputPath, rootPath } from './utils/path';
 
 const buildGacmConfig: DefineLibConfig = {
   baseOptions: {
@@ -12,11 +12,11 @@ const buildGacmConfig: DefineLibConfig = {
     tsConfigPath: resolve(rootPath, 'tsconfig.json'),
     preserveModules: false,
     extraOptions: {
-      banner: '#!/usr/bin/env node',
-    },
+      banner: '#!/usr/bin/env node'
+    }
   },
   buildProduct: ['lib'],
-  pureOutput: true,
+  pureOutput: true
 };
 
 const buildGnrmConfig: DefineLibConfig = {
@@ -28,11 +28,11 @@ const buildGnrmConfig: DefineLibConfig = {
     tsConfigPath: resolve(rootPath, 'tsconfig.json'),
     preserveModules: false,
     extraOptions: {
-      banner: '#!/usr/bin/env node',
-    },
+      banner: '#!/usr/bin/env node'
+    }
   },
   buildProduct: ['lib'],
-  pureOutput: true,
+  pureOutput: true
 };
 
 export const buildBundle = async () => {

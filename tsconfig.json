@@ -10,6 +10,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["package", "typings","build"],
+  "include": ["package", "typings", "build"],
   "exclude": ["node_modules"]
 }

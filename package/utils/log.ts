@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { blue, green, red, yellow } from 'kolorist';
 const success = (msg: string) => console.log(`\n${green(msg)}\n`);
 const error = (msg: string) => console.log(`\n${red(msg)}\n`);
@@ -7,5 +8,5 @@ export const log = {
   success,
   error,
   warning,
-  info,
+  info
 };

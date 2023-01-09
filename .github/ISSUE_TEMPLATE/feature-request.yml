@@ -1,7 +1,7 @@
 name: ✨ Feature Request
 description: Propose new features to vue-simple-json to improve it.
 title: '[Feature]: '
-labels: ['feature']
+labels: [feature]
 body:
   - type: textarea
     id: feature-solve

@@ -5,11 +5,13 @@ import { isExistAlias } from '../../utils/helper';
 import type { UserInfoJson } from '../../type/shell.type';
 
 export const useAlias = async (origin: string, target: string) => {
-  if (!origin || !target) return;
+  if (!origin || !target)
+    return;
 
   let userList = await getFileUser(registriesPath);
 
-  if (!userList) userList = { version: '', users: [] } as UserInfoJson;
+  if (!userList)
+    userList = { version: '', users: [] } as UserInfoJson;
 
   let changed = false;
 
@@ -19,7 +21,8 @@ export const useAlias = async (origin: string, target: string) => {
         x.alias = target;
 
         log.success(`[update]: ${origin}=>${x.alias} (${x.name})`);
-      } else {
+      }
+      else {
         log.error(`${target} is exist, please enter another one `);
       }
 
@@ -27,7 +30,8 @@ export const useAlias = async (origin: string, target: string) => {
     }
   });
 
-  if (!changed) return log.error(`${origin} not found`);
+  if (!changed)
+    return log.error(`${origin} not found`);
 
   await writeFileUser(registriesPath, userList);
 };

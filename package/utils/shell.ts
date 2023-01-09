@@ -8,13 +8,14 @@ export const run = (command: string, dir: string = cwd()) => {
     const app = spawn(cmd, args, {
       cwd: dir,
       stdio: 'inherit',
-      shell: process.platform === 'win32',
+      shell: process.platform === 'win32'
     });
     const processExit = () => app.kill('SIGHUP');
 
     app.on('close', (code) => {
       process.removeListener('exit', processExit);
-      if (code === 0) resolve();
+      if (code === 0)
+        resolve();
       else
         reject(new Error(`command failed: \n command:${cmd} \n code:${code}`));
     });

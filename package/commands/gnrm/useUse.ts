@@ -12,12 +12,14 @@ export const useUse = async (name: string, cmd: NrmCmd) => {
   const userConfig = await getFileUser(registriesPath);
   let registrylist = defaultNpmMirror;
   let packageManager = 'npm';
-  if (userConfig && userConfig.registry) registrylist = userConfig.registry;
+  if (userConfig && userConfig.registry)
+    registrylist = userConfig.registry;
 
-  let useRegistry: RegistryInfo | undefined = undefined;
+  let useRegistry: RegistryInfo | undefined;
   if (name) {
-    useRegistry = registrylist.find((x) => x.alias === name);
-  } else {
+    useRegistry = registrylist.find(x => x.alias === name);
+  }
+  else {
     const { registry, pkg } = await prompts([
       {
         type: 'select',
@@ -28,42 +30,44 @@ export const useUse = async (name: string, cmd: NrmCmd) => {
             title: `${x.alias}${x.alias === x.name ? '' : `(${x.name})`} ${
               x.registry
             }`,
-            value: x,
+            value: x
           };
-        }),
+        })
       },
       {
         type: 'select',
         name: 'pkg',
         message: 'Pick a packageManager,and you will set registry for it',
         initial: 0,
-        choices: defaultPackageManager.map((x) => ({
+        choices: defaultPackageManager.map(x => ({
           title: x,
-          value: x,
-        })),
-      },
+          value: x
+        }))
+      }
     ]);
 
-    if (pkg) packageManager = pkg;
+    if (pkg)
+      packageManager = pkg;
 
     if (!registry) {
-      log.error(`user cancel operation`);
+      log.error('user cancel operation');
       return;
     }
     useRegistry = registry;
   }
-  if (!useRegistry) return log.error(`${name} not found`);
+  if (!useRegistry)
+    return log.error(`${name} not found`);
 
-  if (cmd.packageManager) packageManager = cmd.packageManager;
+  if (cmd.packageManager)
+    packageManager = cmd.packageManager;
 
   await execCommand(packageManager, [
     'config',
     'set',
     'registry',
-    useRegistry.registry,
+    useRegistry.registry
   ]).catch(() => {
     log.error(`${packageManager} is not found`);
-    return;
   });
 
   log.success(

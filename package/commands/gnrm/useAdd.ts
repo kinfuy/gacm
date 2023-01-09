@@ -1,9 +1,9 @@
 import { insertRegistry } from '../../utils/helper';
 
 export interface AddCmd {
-  name: string;
-  registry: string;
-  alias: string;
+  name: string
+  registry: string
+  alias: string
 }
 // 相同的情况直接覆盖更新
 export const useAdd = async (cmd: AddCmd) => {

@@ -8,7 +8,7 @@ import { enterPath, rootPath } from './path';
 
 const pkgPaths = [
   resolve(enterPath, 'package.json'),
-  resolve(rootPath, 'package.json'),
+  resolve(rootPath, 'package.json')
 ];
 
 /**
@@ -48,9 +48,10 @@ const getVersion = (rl: readline.Interface): Promise<string> => {
       if (reg.test(version)) {
         rl.close();
         resolve(version);
-      } else {
+      }
+      else {
         // eslint-disable-next-line no-console
-        console.log(red(`请输入正确的版本号!`));
+        console.log(red('请输入正确的版本号!'));
         resolve(await getVersion(rl));
       }
     });
@@ -60,7 +61,7 @@ const getVersion = (rl: readline.Interface): Promise<string> => {
 (() => {
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout,
+    output: process.stdout
   });
 
   rl.question(
@@ -71,7 +72,8 @@ const getVersion = (rl: readline.Interface): Promise<string> => {
         pkgPaths.forEach((pkg) => {
           changeVersion(version, pkg);
         });
-      } else {
+      }
+      else {
         rl.close();
       }
     }

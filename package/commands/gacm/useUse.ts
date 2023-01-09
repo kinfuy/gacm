@@ -6,20 +6,22 @@ import { run } from '../../utils/shell';
 import type { UserInfo } from '../../type/shell.type';
 
 export interface UseCmd {
-  local?: boolean;
-  global?: boolean;
-  system?: boolean;
+  local?: boolean
+  global?: boolean
+  system?: boolean
 }
 
 export const useUse = async (name: string, cmd: UseCmd) => {
   const userList = await getFileUser(registriesPath);
 
-  if (!userList) return log.error(`no user exists`);
+  if (!userList)
+    return log.error('no user exists');
 
-  let useUser: UserInfo | undefined = undefined;
+  let useUser: UserInfo | undefined;
   if (name) {
-    useUser = userList.users.find((x) => x.alias === name);
-  } else {
+    useUser = userList.users.find(x => x.alias === name);
+  }
+  else {
     const { user } = await prompts({
       type: 'select',
       name: 'user',
@@ -29,26 +31,30 @@ export const useUse = async (name: string, cmd: UseCmd) => {
           title: `${x.alias}${x.alias === x.name ? '' : `(${x.name})`} ${
             x.email
           }`,
-          value: x,
+          value: x
         };
-      }),
+      })
     });
     if (!user) {
-      log.error(`user cancel operation`);
+      log.error('user cancel operation');
       return;
     }
     useUser = user;
   }
 
-  if (!useUser) return log.error(`${name} not found`);
+  if (!useUser)
+    return log.error(`${name} not found`);
 
   let env = 'local';
 
-  if (cmd.system) env = 'system';
+  if (cmd.system)
+    env = 'system';
 
-  if (cmd.global) env = 'global';
+  if (cmd.global)
+    env = 'global';
 
-  if (cmd.local) env = 'local';
+  if (cmd.local)
+    env = 'local';
 
   await run(`git config --${env} user.name ${useUser.name}`);
 

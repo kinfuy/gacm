@@ -9,26 +9,19 @@ import pkg from '../../package.json';
 import type { UserInfoJson } from '../../type/shell.type';
 
 export const useLs = async () => {
-  const userList =
-    (await getFileUser(registriesPath)) ||
-    ({ version: pkg.version, users: [], registry: [] } as UserInfoJson);
+  const userList = (await getFileUser(registriesPath)) || ({ version: pkg.version, users: [], registry: [] } as UserInfoJson);
 
-  const currectUser = await execCommand('git', ['config', 'user.name']).catch(
-    () => {}
-  );
+  const currectUser = await execCommand('git', ['config', 'user.name']).catch(() => {});
 
-  const currectEmail = await execCommand('git', ['config', 'user.email']).catch(
-    () => {}
-  );
+  const currectEmail = await execCommand('git', ['config', 'user.email']).catch(() => {});
 
-  if (userList.users.length === 0 && (!currectUser || !currectEmail)) {
+  if (userList.users.length === 0 && (!currectUser || !currectEmail))
     return log.info('no user');
-  }
 
   if (
-    !userList.users.some((x) => x.name === currectUser) &&
-    currectUser &&
-    currectEmail
+    !userList.users.some(x => x.name === currectUser)
+    && currectUser
+    && currectEmail
   ) {
     // 默认添加本地账户
 
@@ -39,14 +32,14 @@ export const useLs = async () => {
     userList.users.push({
       name: currectUser,
       email: currectEmail,
-      alias: currectUser,
+      alias: currectUser
     });
   }
 
-  const length =
-    Math.max(
+  const length
+    = Math.max(
       ...userList.users.map(
-        (user) =>
+        user =>
           user.alias.length + (user.alias !== user.name ? user.name.length : 0)
       )
     ) + 3;
@@ -54,8 +47,8 @@ export const useLs = async () => {
   const prefix = '  ';
 
   const messages = userList.users.map((user) => {
-    const currect =
-      user.name === currectUser && user.email === currectEmail
+    const currect
+      = user.name === currectUser && user.email === currectEmail
         ? `${green('*')}`
         : ' ';
 

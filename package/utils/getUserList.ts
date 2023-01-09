@@ -1,7 +1,7 @@
 import { existsSync, promises } from 'fs';
+import type { UserInfoJson, UserOldInfoJson } from '../type/shell.type';
 import { log } from './log';
 import { transformData } from './helper';
-import type { UserInfoJson, UserOldInfoJson } from '../type/shell.type';
 const { readFile, writeFile } = promises;
 
 /**

@@ -3,13 +3,13 @@
   "version": "1.2.5",
   "private": false,
   "description": "git account manage",
+  "author": "alqmc",
+  "license": "MIT",
   "keywords": [
     "git",
     "account",
     "manage"
   ],
-  "license": "MIT",
-  "author": "alqmc",
   "bin": {
     "gacm": "gacm.js",
     "gnrm": "gnrm.js"

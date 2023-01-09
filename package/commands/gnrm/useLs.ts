@@ -12,15 +12,16 @@ import type { NrmCmd } from '../../type/shell.type';
 export const useLs = async (cmd: NrmCmd) => {
   const userConfig = await getFileUser(registriesPath);
   let registryList = defaultNpmMirror;
-  if (userConfig) {
+  if (userConfig)
     if (!userConfig.registry || userConfig.registry.length === 0) {
       userConfig.registry = registryList;
       writeFileUser(registriesPath, userConfig);
-    } else registryList = userConfig.registry;
-  }
+    }
+    else { registryList = userConfig.registry; }
 
   let packageManager = 'npm';
-  if (cmd.packageManager) packageManager = cmd.packageManager;
+  if (cmd.packageManager)
+    packageManager = cmd.packageManager;
   // npm config get registry
 
   let currectRegistry = '';
@@ -28,20 +29,21 @@ export const useLs = async (cmd: NrmCmd) => {
     currectRegistry = await execCommand(packageManager, [
       'config',
       'get',
-      'registry',
+      'registry'
     ]);
-  } catch (error) {
+  }
+  catch (error) {
     log.error(`${packageManager} is not found`);
     return;
   }
 
-  if (registryList.every((x) => x.registry !== currectRegistry)) {
+  if (registryList.every(x => x.registry !== currectRegistry))
     // 默认添加本地源
     try {
       const { name } = await prompts({
         type: 'text',
         name: 'name',
-        message: `find new registry:${currectRegistry}, please give it a name`,
+        message: `find new registry:${currectRegistry}, please give it a name`
       });
       await insertRegistry(name, name, currectRegistry);
 
@@ -51,13 +53,13 @@ export const useLs = async (cmd: NrmCmd) => {
         name,
         registry: currectRegistry,
         home: '',
-        alias: name,
+        alias: name
       });
-    } catch (error) {}
-  }
+    }
+    catch (error) {}
 
-  const length =
-    Math.max(
+  const length
+    = Math.max(
       ...registryList.map((x) => {
         return x.alias.length + (x.alias !== x.name ? x.name.length : 0);
       })

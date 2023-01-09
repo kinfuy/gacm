@@ -1,24 +1,24 @@
 export interface UserInfo {
-  name: string;
-  email: string;
-  alias: string;
+  name: string
+  email: string
+  alias: string
 }
 
 export interface RegistryInfo {
-  name: string;
-  alias: string;
-  home: string;
-  registry: string;
+  name: string
+  alias: string
+  home: string
+  registry: string
 }
 export interface UserInfoJson {
-  version: string;
-  users: Array<UserInfo>;
-  registry?: Array<RegistryInfo>;
+  version: string
+  users: Array<UserInfo>
+  registry?: Array<RegistryInfo>
 }
 export interface UserOldInfoJson extends Record<string, any> {
-  key: UserInfo;
+  key: UserInfo
 }
 
 export interface NrmCmd {
-  packageManager: string;
+  packageManager: string
 }
