@@ -1,3 +1,8 @@
+# [v1.2.6](https://github.com/alqmc/gacm/compare/v1.2.5...v1.2.6)（2023-01-30）
+
+
+## What's Changed
+  - Fix: gnrm use select options ([a3f6925](https://github.com/alqmc/gacm/commit/a3f6925))
 # [v1.2.5](https://github.com/alqmc/gacm/compare/v1.2.4...v1.2.5)（2022-11-18）
 
 
