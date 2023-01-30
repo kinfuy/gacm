@@ -42,24 +42,31 @@ const log = {
 };
 
 var name$1 = "gacm";
-var version$1 = "1.2.5";
+var version$1 = "1.2.6";
 var description$1 = "gacm";
+var author$1 = "alqmc";
+var license$1 = "MIT";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
 	clear: "rimraf dist",
 	link: "cd dist && pnpm link --global",
 	push: "git push gitee master && git push github master",
 	"update:version": "sucrase-node build/utils/version.ts",
+	lint: "eslint . --fix",
 	log: "changeloger",
 	release: "sucrase-node script/release.ts",
 	prepare: "husky install"
 };
-var author$1 = "alqmc";
-var license$1 = "MIT";
+var dependencies$1 = {
+	execa: "5.1.1",
+	kolorist: "^1.5.1",
+	minimist: "^1.2.6",
+	prompts: "^2.4.2"
+};
 var devDependencies = {
 	"@alqmc/build-ts": "^0.0.8",
 	"@alqmc/build-utils": "^0.0.3",
-	"@alqmc/eslint-config": "0.0.4",
+	"@alqmc/eslint-config-ts": "^0.0.9",
 	"@commitlint/cli": "^8.3.5",
 	"@commitlint/config-angular": "^8.3.4",
 	"@commitlint/config-conventional": "^16.2.1",
@@ -70,6 +77,7 @@ var devDependencies = {
 	cac: "^6.7.14",
 	changeloger: "0.1.0",
 	commitizen: "^4.1.2",
+	eslint: "^8.31.0",
 	"fs-extra": "^10.1.0",
 	gulp: "^4.0.2",
 	husky: "^8.0.1",
@@ -81,23 +89,31 @@ var devDependencies = {
 	tslib: "^2.4.0",
 	typescript: "^4.6.3"
 };
-var dependencies$1 = {
-	execa: "5.1.1",
-	kolorist: "^1.5.1",
-	minimist: "^1.2.6",
-	prompts: "^2.4.2"
-};
 var pkg$1 = {
 	name: name$1,
 	version: version$1,
 	description: description$1,
-	scripts: scripts,
 	author: author$1,
 	license: license$1,
-	devDependencies: devDependencies,
-	dependencies: dependencies$1
+	scripts: scripts,
+	dependencies: dependencies$1,
+	devDependencies: devDependencies
 };
 
+const transformData = (data) => {
+  const userInfo = { version: "", users: [] };
+  Object.keys(data).forEach((x) => {
+    userInfo.users.push({
+      name: data[x].name,
+      email: data[x].email,
+      alias: data[x].name
+    });
+  });
+  return userInfo;
+};
+const isExistAlias = (users, alias, name, email) => {
+  return users.some((x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email);
+};
 const insertUser = async (name, email, alias = name) => {
   let userConfig = await getFileUser(registriesPath);
   if (!userConfig)
@@ -126,20 +142,6 @@ const insertUser = async (name, email, alias = name) => {
     log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ""}`);
   }
   await writeFileUser(registriesPath, userConfig);
-};
-const transformData = (data) => {
-  const userInfo = { version: "", users: [] };
-  Object.keys(data).forEach((x) => {
-    userInfo.users.push({
-      name: data[x].name,
-      email: data[x].email,
-      alias: data[x].name
-    });
-  });
-  return userInfo;
-};
-const isExistAlias = (users, alias, name, email) => {
-  return users.some((x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email);
 };
 
 const { readFile, writeFile } = fs.promises;
@@ -186,31 +188,30 @@ const execCommand = async (cmd, args) => {
   return res.stdout.trim();
 };
 
+const padding = (message = "", before = 1, after = 1) => {
+  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
+};
 const geneDashLine = (message, length) => {
   const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
   return padding(kolorist.white(finalMessage));
 };
-const padding = (message = "", before = 1, after = 1) => {
-  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
-};
 const printMessages = (messages) => {
   console.log("\n");
-  for (const message of messages) {
+  for (const message of messages)
     console.log(message);
-  }
   console.log("\n");
 };
 
 var name = "gacm";
-var version = "1.2.5";
+var version = "1.2.6";
 var description = "git account manage";
+var author = "alqmc";
+var license = "MIT";
 var keywords = [
 	"git",
 	"account",
 	"manage"
 ];
-var license = "MIT";
-var author = "alqmc";
 var bin = {
 	gacm: "gacm.js",
 	gnrm: "gnrm.js"
@@ -229,9 +230,9 @@ var pkg = {
 	version: version,
 	"private": false,
 	description: description,
-	keywords: keywords,
-	license: license,
 	author: author,
+	license: license,
+	keywords: keywords,
 	bin: bin,
 	publishConfig: publishConfig,
 	dependencies: dependencies
@@ -243,9 +244,8 @@ const useLs = async () => {
   });
   const currectEmail = await execCommand("git", ["config", "user.email"]).catch(() => {
   });
-  if (userList.users.length === 0 && (!currectUser || !currectEmail)) {
+  if (userList.users.length === 0 && (!currectUser || !currectEmail))
     return log.info("no user");
-  }
   if (!userList.users.some((x) => x.name === currectUser) && currectUser && currectEmail) {
     await insertUser(currectUser, currectEmail);
     log.info(`[found new user]: ${currectUser}`);
@@ -268,23 +268,21 @@ const useLs = async () => {
 const useDelete = async (name) => {
   const userList = await getFileUser(registriesPath);
   if (!userList)
-    return log.error(`no user`);
+    return log.error("no user");
   const useUser = userList.users.find((x) => x.alias === name || !x.alias && x.name === name);
   if (!useUser)
     return log.error(`${name} not found`);
-  for (let i = 0; i < userList.users.length; i++) {
+  for (let i = 0; i < userList.users.length; i++)
     if (!userList.users[i].alias && userList.users[i].name === name || userList.users[i].alias === name) {
       log.success(`[delete]: ${userList.users[i].alias}${userList.users[i].alias !== userList.users[i].name ? `(${userList.users[i].name})` : ""}`);
       userList.users.splice(i, 1);
     }
-  }
   await writeFileUser(registriesPath, userList);
 };
 
 const useAdd = async (cmd) => {
-  if (cmd.name && cmd.email) {
+  if (cmd.name && cmd.email)
     await insertUser(cmd.name, cmd.email, cmd.alias);
-  }
 };
 
 const useAlias = async (origin, target) => {
@@ -313,8 +311,8 @@ const useAlias = async (origin, target) => {
 const useUse = async (name, cmd) => {
   const userList = await getFileUser(registriesPath);
   if (!userList)
-    return log.error(`no user exists`);
-  let useUser = void 0;
+    return log.error("no user exists");
+  let useUser;
   if (name) {
     useUser = userList.users.find((x) => x.alias === name);
   } else {
@@ -330,7 +328,7 @@ const useUse = async (name, cmd) => {
       })
     });
     if (!user) {
-      log.error(`user cancel operation`);
+      log.error("user cancel operation");
       return;
     }
     useUser = user;

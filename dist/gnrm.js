@@ -17,15 +17,15 @@ var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name$1 = "gacm";
-var version$1 = "1.2.5";
+var version$1 = "1.2.6";
 var description$1 = "git account manage";
+var author$1 = "alqmc";
+var license$1 = "MIT";
 var keywords = [
 	"git",
 	"account",
 	"manage"
 ];
-var license$1 = "MIT";
-var author$1 = "alqmc";
 var bin = {
 	gacm: "gacm.js",
 	gnrm: "gnrm.js"
@@ -44,9 +44,9 @@ var pkg$1 = {
 	version: version$1,
 	"private": false,
 	description: description$1,
-	keywords: keywords,
-	license: license$1,
 	author: author$1,
+	license: license$1,
+	keywords: keywords,
 	bin: bin,
 	publishConfig: publishConfig,
 	dependencies: dependencies$1
@@ -82,24 +82,31 @@ const log = {
 };
 
 var name = "gacm";
-var version = "1.2.5";
+var version = "1.2.6";
 var description = "gacm";
+var author = "alqmc";
+var license = "MIT";
 var scripts = {
 	build: "gulp --require sucrase/register/ts --gulpfile build/gulpfile.ts",
 	clear: "rimraf dist",
 	link: "cd dist && pnpm link --global",
 	push: "git push gitee master && git push github master",
 	"update:version": "sucrase-node build/utils/version.ts",
+	lint: "eslint . --fix",
 	log: "changeloger",
 	release: "sucrase-node script/release.ts",
 	prepare: "husky install"
 };
-var author = "alqmc";
-var license = "MIT";
+var dependencies = {
+	execa: "5.1.1",
+	kolorist: "^1.5.1",
+	minimist: "^1.2.6",
+	prompts: "^2.4.2"
+};
 var devDependencies = {
 	"@alqmc/build-ts": "^0.0.8",
 	"@alqmc/build-utils": "^0.0.3",
-	"@alqmc/eslint-config": "0.0.4",
+	"@alqmc/eslint-config-ts": "^0.0.9",
 	"@commitlint/cli": "^8.3.5",
 	"@commitlint/config-angular": "^8.3.4",
 	"@commitlint/config-conventional": "^16.2.1",
@@ -110,6 +117,7 @@ var devDependencies = {
 	cac: "^6.7.14",
 	changeloger: "0.1.0",
 	commitizen: "^4.1.2",
+	eslint: "^8.31.0",
 	"fs-extra": "^10.1.0",
 	gulp: "^4.0.2",
 	husky: "^8.0.1",
@@ -121,21 +129,15 @@ var devDependencies = {
 	tslib: "^2.4.0",
 	typescript: "^4.6.3"
 };
-var dependencies = {
-	execa: "5.1.1",
-	kolorist: "^1.5.1",
-	minimist: "^1.2.6",
-	prompts: "^2.4.2"
-};
 var pkg = {
 	name: name,
 	version: version,
 	description: description,
-	scripts: scripts,
 	author: author,
 	license: license,
-	devDependencies: devDependencies,
-	dependencies: dependencies
+	scripts: scripts,
+	dependencies: dependencies,
+	devDependencies: devDependencies
 };
 
 const transformData = (data) => {
@@ -244,31 +246,30 @@ const execCommand = async (cmd, args) => {
   return res.stdout.trim();
 };
 
+const padding = (message = "", before = 1, after = 1) => {
+  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
+};
 const geneDashLine = (message, length) => {
   const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
   return padding(kolorist.white(finalMessage));
 };
-const padding = (message = "", before = 1, after = 1) => {
-  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
-};
 const printMessages = (messages) => {
   console.log("\n");
-  for (const message of messages) {
+  for (const message of messages)
     console.log(message);
-  }
   console.log("\n");
 };
 
 const useLs = async (cmd) => {
   const userConfig = await getFileUser(registriesPath);
   let registryList = defaultNpmMirror;
-  if (userConfig) {
+  if (userConfig)
     if (!userConfig.registry || userConfig.registry.length === 0) {
       userConfig.registry = registryList;
       writeFileUser(registriesPath, userConfig);
-    } else
+    } else {
       registryList = userConfig.registry;
-  }
+    }
   let packageManager = "npm";
   if (cmd.packageManager)
     packageManager = cmd.packageManager;
@@ -283,7 +284,7 @@ const useLs = async (cmd) => {
     log.error(`${packageManager} is not found`);
     return;
   }
-  if (registryList.every((x) => x.registry !== currectRegistry)) {
+  if (registryList.every((x) => x.registry !== currectRegistry))
     try {
       const { name } = await prompts__default["default"]({
         type: "text",
@@ -300,7 +301,6 @@ const useLs = async (cmd) => {
       });
     } catch (error) {
     }
-  }
   const length = Math.max(...registryList.map((x) => {
     return x.alias.length + (x.alias !== x.name ? x.name.length : 0);
   })) + 3;
@@ -313,14 +313,14 @@ const useLs = async (cmd) => {
   printMessages(messages);
 };
 
-const defaultPackageManager = ["npm", "yarn", "npm", "pnpm"];
+const defaultPackageManager = ["npm", "yarn", "cnpm", "pnpm"];
 const useUse = async (name, cmd) => {
   const userConfig = await getFileUser(registriesPath);
   let registrylist = defaultNpmMirror;
   let packageManager = "npm";
   if (userConfig && userConfig.registry)
     registrylist = userConfig.registry;
-  let useRegistry = void 0;
+  let useRegistry;
   if (name) {
     useRegistry = registrylist.find((x) => x.alias === name);
   } else {
@@ -350,7 +350,7 @@ const useUse = async (name, cmd) => {
     if (pkg)
       packageManager = pkg;
     if (!registry) {
-      log.error(`user cancel operation`);
+      log.error("user cancel operation");
       return;
     }
     useRegistry = registry;
@@ -366,7 +366,6 @@ const useUse = async (name, cmd) => {
     useRegistry.registry
   ]).catch(() => {
     log.error(`${packageManager} is not found`);
-    return;
   });
   log.success(`${packageManager} registry has been set to:  ${useRegistry.registry}`);
 };
@@ -406,18 +405,17 @@ const useAlias = async (origin, target) => {
 const useDelete = async (name) => {
   const userConfig = await getFileUser(registriesPath);
   if (!userConfig)
-    return log.error(`no registry`);
+    return log.error("no registry");
   if (!userConfig.registry)
-    return log.error(`no registry`);
+    return log.error("no registry");
   const useRegistry = userConfig.registry.find((x) => x.alias === name);
   if (!useRegistry)
     return log.error(`${name} not found`);
-  for (let i = 0; i < userConfig.registry.length; i++) {
+  for (let i = 0; i < userConfig.registry.length; i++)
     if (userConfig.registry[i].alias === name) {
       log.success(`[delete]: ${userConfig.registry[i].alias}  ${userConfig.registry[i].registry}`);
       userConfig.registry.splice(i, 1);
     }
-  }
   await writeFileUser(registriesPath, userConfig);
 };
 
