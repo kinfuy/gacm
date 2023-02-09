@@ -41,6 +41,75 @@ const log = {
   info
 };
 
+const transformData = (data) => {
+  const userInfo = { version: "", users: [] };
+  Object.keys(data).forEach((x) => {
+    userInfo.users.push({
+      name: data[x].name,
+      email: data[x].email,
+      alias: data[x].name
+    });
+  });
+  return userInfo;
+};
+const padding = (message = "", before = 1, after = 1) => {
+  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
+};
+const geneDashLine = (message, length) => {
+  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
+  return padding(kolorist.white(finalMessage));
+};
+const printMessages = (messages) => {
+  console.log("\n");
+  for (const message of messages)
+    console.log(message);
+  console.log("\n");
+};
+
+const { readFile, writeFile } = fs.promises;
+const getFileUser = async (rootPath) => {
+  if (fs.existsSync(rootPath)) {
+    const fileBuffer = await readFile(rootPath, "utf-8");
+    let userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
+    if (userList && !userList.version)
+      userList = transformData(userList);
+    return userList;
+  }
+  return null;
+};
+async function writeFileUser(dir, data) {
+  writeFile(dir, JSON.stringify(data, null, 4)).catch((error) => {
+    log.error(error);
+    process.exit(0);
+  });
+}
+
+const run = (command, dir = process$1.cwd()) => {
+  const [cmd, ...args] = command.split(" ");
+  return new Promise((resolve, reject) => {
+    const app = child_process.spawn(cmd, args, {
+      cwd: dir,
+      stdio: "inherit",
+      shell: process.platform === "win32"
+    });
+    const processExit = () => app.kill("SIGHUP");
+    app.on("close", (code) => {
+      process.removeListener("exit", processExit);
+      if (code === 0)
+        resolve();
+      else
+        reject(new Error(`command failed: 
+ command:${cmd} 
+ code:${code}`));
+    });
+    process.on("exit", processExit);
+  });
+};
+const execCommand = async (cmd, args) => {
+  const res = await execa__default["default"](cmd, args);
+  return res.stdout.trim();
+};
+
 var name$1 = "gacm";
 var version$1 = "1.2.6";
 var description$1 = "gacm";
@@ -100,17 +169,6 @@ var pkg$1 = {
 	devDependencies: devDependencies
 };
 
-const transformData = (data) => {
-  const userInfo = { version: "", users: [] };
-  Object.keys(data).forEach((x) => {
-    userInfo.users.push({
-      name: data[x].name,
-      email: data[x].email,
-      alias: data[x].name
-    });
-  });
-  return userInfo;
-};
 const isExistAlias = (users, alias, name, email) => {
   return users.some((x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email);
 };
@@ -142,64 +200,6 @@ const insertUser = async (name, email, alias = name) => {
     log.success(`[add]: ${alias} ${alias !== name ? `(${name})` : ""}`);
   }
   await writeFileUser(registriesPath, userConfig);
-};
-
-const { readFile, writeFile } = fs.promises;
-const getFileUser = async (rootPath) => {
-  if (fs.existsSync(rootPath)) {
-    const fileBuffer = await readFile(rootPath, "utf-8");
-    let userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
-    if (userList && !userList.version)
-      userList = transformData(userList);
-    return userList;
-  }
-  return null;
-};
-async function writeFileUser(dir, data) {
-  writeFile(dir, JSON.stringify(data, null, 4)).catch((error) => {
-    log.error(error);
-    process.exit(0);
-  });
-}
-
-const run = (command, dir = process$1.cwd()) => {
-  const [cmd, ...args] = command.split(" ");
-  return new Promise((resolve, reject) => {
-    const app = child_process.spawn(cmd, args, {
-      cwd: dir,
-      stdio: "inherit",
-      shell: process.platform === "win32"
-    });
-    const processExit = () => app.kill("SIGHUP");
-    app.on("close", (code) => {
-      process.removeListener("exit", processExit);
-      if (code === 0)
-        resolve();
-      else
-        reject(new Error(`command failed: 
- command:${cmd} 
- code:${code}`));
-    });
-    process.on("exit", processExit);
-  });
-};
-const execCommand = async (cmd, args) => {
-  const res = await execa__default["default"](cmd, args);
-  return res.stdout.trim();
-};
-
-const padding = (message = "", before = 1, after = 1) => {
-  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
-};
-const geneDashLine = (message, length) => {
-  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
-  return padding(kolorist.white(finalMessage));
-};
-const printMessages = (messages) => {
-  console.log("\n");
-  for (const message of messages)
-    console.log(message);
-  console.log("\n");
 };
 
 var name = "gacm";

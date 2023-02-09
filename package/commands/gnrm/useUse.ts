@@ -1,12 +1,10 @@
 import prompts from 'prompts';
 import { registriesPath } from '../../config/path';
-import { defaultNpmMirror } from '../../config/registry';
+import { defaultNpmMirror, defaultPackageManager } from '../../config/registry';
 import { getFileUser } from '../../utils/getUserList';
 import { log } from '../../utils/log';
 import { execCommand } from '../../utils/shell';
 import type { NrmCmd, RegistryInfo } from '../../type/shell.type';
-
-const defaultPackageManager = ['npm', 'yarn', 'cnpm', 'pnpm'];
 
 export const useUse = async (name: string, cmd: NrmCmd) => {
   const userConfig = await getFileUser(registriesPath);

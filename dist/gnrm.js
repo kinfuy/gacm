@@ -81,6 +81,94 @@ const log = {
   info
 };
 
+const transformData = (data) => {
+  const userInfo = { version: "", users: [] };
+  Object.keys(data).forEach((x) => {
+    userInfo.users.push({
+      name: data[x].name,
+      email: data[x].email,
+      alias: data[x].name
+    });
+  });
+  return userInfo;
+};
+const padding = (message = "", before = 1, after = 1) => {
+  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
+};
+const geneDashLine = (message, length) => {
+  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
+  return padding(kolorist.white(finalMessage));
+};
+const printMessages = (messages) => {
+  console.log("\n");
+  for (const message of messages)
+    console.log(message);
+  console.log("\n");
+};
+
+const { readFile, writeFile } = fs.promises;
+const getFileUser = async (rootPath) => {
+  if (fs.existsSync(rootPath)) {
+    const fileBuffer = await readFile(rootPath, "utf-8");
+    let userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
+    if (userList && !userList.version)
+      userList = transformData(userList);
+    return userList;
+  }
+  return null;
+};
+async function writeFileUser(dir, data) {
+  writeFile(dir, JSON.stringify(data, null, 4)).catch((error) => {
+    log.error(error);
+    process.exit(0);
+  });
+}
+
+const defaultPackageManager = ["npm", "yarn", "cnpm", "pnpm"];
+const defaultNpmMirror = [
+  {
+    name: "npm",
+    alias: "npm",
+    home: "https://www.npmjs.org",
+    registry: "https://registry.npmjs.org/"
+  },
+  {
+    name: "yarn",
+    alias: "yarn",
+    home: "https://yarnpkg.com",
+    registry: "https://registry.yarnpkg.com/"
+  },
+  {
+    name: "tencent",
+    alias: "tencent",
+    home: "https://mirrors.cloud.tencent.com/npm/",
+    registry: "https://mirrors.cloud.tencent.com/npm/"
+  },
+  {
+    name: "cnpm",
+    alias: "cnpm",
+    home: "https://cnpmjs.org",
+    registry: "https://r.cnpmjs.org/"
+  },
+  {
+    name: "taobao",
+    alias: "taobao",
+    home: "https://npmmirror.com",
+    registry: "https://registry.npmmirror.com/"
+  },
+  {
+    name: "npmMirror",
+    alias: "npmMirror",
+    home: "https://skimdb.npmjs.com/",
+    registry: "https://skimdb.npmjs.com/registry/"
+  }
+];
+
+const execCommand = async (cmd, args) => {
+  const res = await execa__default["default"](cmd, args);
+  return res.stdout.trim();
+};
+
 var name = "gacm";
 var version = "1.2.6";
 var description = "gacm";
@@ -140,17 +228,6 @@ var pkg = {
 	devDependencies: devDependencies
 };
 
-const transformData = (data) => {
-  const userInfo = { version: "", users: [] };
-  Object.keys(data).forEach((x) => {
-    userInfo.users.push({
-      name: data[x].name,
-      email: data[x].email,
-      alias: data[x].name
-    });
-  });
-  return userInfo;
-};
 const insertRegistry = async (name, alias, registry, home) => {
   let userConfig = await getFileUser(registriesPath);
   if (!userConfig)
@@ -184,82 +261,25 @@ const insertRegistry = async (name, alias, registry, home) => {
   await writeFileUser(registriesPath, userConfig);
 };
 
-const { readFile, writeFile } = fs.promises;
-const getFileUser = async (rootPath) => {
-  if (fs.existsSync(rootPath)) {
-    const fileBuffer = await readFile(rootPath, "utf-8");
-    let userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
-    if (userList && !userList.version)
-      userList = transformData(userList);
-    return userList;
-  }
-  return null;
-};
-async function writeFileUser(dir, data) {
-  writeFile(dir, JSON.stringify(data, null, 4)).catch((error) => {
-    log.error(error);
-    process.exit(0);
+const getRegistry = async (pkg) => {
+  return await execCommand(pkg, [
+    "config",
+    "get",
+    "registry"
+  ]).catch(() => {
   });
-}
-
-const defaultNpmMirror = [
-  {
-    name: "npm",
-    alias: "npm",
-    home: "https://www.npmjs.org",
-    registry: "https://registry.npmjs.org/"
-  },
-  {
-    name: "yarn",
-    alias: "yarn",
-    home: "https://yarnpkg.com",
-    registry: "https://registry.yarnpkg.com/"
-  },
-  {
-    name: "tencent",
-    alias: "tencent",
-    home: "https://mirrors.cloud.tencent.com/npm/",
-    registry: "https://mirrors.cloud.tencent.com/npm/"
-  },
-  {
-    name: "cnpm",
-    alias: "cnpm",
-    home: "https://cnpmjs.org",
-    registry: "https://r.cnpmjs.org/"
-  },
-  {
-    name: "taobao",
-    alias: "taobao",
-    home: "https://npmmirror.com",
-    registry: "https://registry.npmmirror.com/"
-  },
-  {
-    name: "npmMirror",
-    alias: "npmMirror",
-    home: "https://skimdb.npmjs.com/",
-    registry: "https://skimdb.npmjs.com/registry/"
-  }
-];
-
-const execCommand = async (cmd, args) => {
-  const res = await execa__default["default"](cmd, args);
-  return res.stdout.trim();
 };
-
-const padding = (message = "", before = 1, after = 1) => {
-  return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
+const getRegistrys = async (pkgs = defaultPackageManager) => {
+  const registrys = {
+    npm: "",
+    pnpm: "",
+    cnpm: "",
+    yarn: ""
+  };
+  for (let i = 0; i < pkgs.length; i++)
+    registrys[pkgs[i]] = await getRegistry(pkgs[i]) || "";
+  return registrys;
 };
-const geneDashLine = (message, length) => {
-  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
-  return padding(kolorist.white(finalMessage));
-};
-const printMessages = (messages) => {
-  console.log("\n");
-  for (const message of messages)
-    console.log(message);
-  console.log("\n");
-};
-
 const useLs = async (cmd) => {
   const userConfig = await getFileUser(registriesPath);
   let registryList = defaultNpmMirror;
@@ -270,50 +290,67 @@ const useLs = async (cmd) => {
     } else {
       registryList = userConfig.registry;
     }
-  let packageManager = "npm";
+  const pkgs = [];
   if (cmd.packageManager)
-    packageManager = cmd.packageManager;
-  let currectRegistry = "";
-  try {
-    currectRegistry = await execCommand(packageManager, [
-      "config",
-      "get",
-      "registry"
-    ]);
-  } catch (error) {
-    log.error(`${packageManager} is not found`);
-    return;
-  }
-  if (registryList.every((x) => x.registry !== currectRegistry))
+    pkgs.push(cmd.packageManager);
+  else
+    pkgs.push(...defaultPackageManager);
+  const currectRegistry = await getRegistrys(pkgs);
+  if (registryList.every((x) => Object.values(currectRegistry).includes(x.registry)))
     try {
-      const { name } = await prompts__default["default"]({
-        type: "text",
-        name: "name",
-        message: `find new registry:${currectRegistry}, please give it a name`
+      const newRegistry = Object.keys(currectRegistry).map((x) => {
+        if (registryList.every((val) => currectRegistry[x] && val.registry !== currectRegistry[x]))
+          return currectRegistry[x];
+        return "";
       });
-      await insertRegistry(name, name, currectRegistry);
-      log.info(`[found new registry]: ${currectRegistry}`);
-      registryList.push({
-        name,
-        registry: currectRegistry,
-        home: "",
-        alias: name
+      Array.from(new Set(newRegistry)).filter((x) => x).forEach(async (registry) => {
+        const { name } = await prompts__default["default"]({
+          type: "text",
+          name: "name",
+          message: `find new registry:${currectRegistry}, please give it a name`
+        });
+        await insertRegistry(name, name, registry);
+        log.info(`[found new registry]: ${currectRegistry}`);
+        registryList.push({
+          name,
+          registry,
+          home: "",
+          alias: name
+        });
       });
     } catch (error) {
     }
   const length = Math.max(...registryList.map((x) => {
     return x.alias.length + (x.alias !== x.name ? x.name.length : 0);
   })) + 3;
-  const prefix = "  ";
+  const prefix = "";
+  const colorMap = {
+    npm: kolorist.green,
+    cnpm: kolorist.red,
+    yarn: kolorist.blue,
+    pnpm: kolorist.yellow
+  };
+  const currentTip = `current: ${Object.keys(currectRegistry).map((key) => {
+    if (currectRegistry[key])
+      return `${key}: ${colorMap[key]("*")}`;
+    return "";
+  }).filter((i) => i).join(" ")}
+
+`;
   const messages = registryList.map((item) => {
-    const currect = item.registry === currectRegistry ? `${kolorist.green("*")}` : " ";
+    const currect = Object.keys(currectRegistry).map((key) => {
+      if (currectRegistry[key] && item.registry.includes(currectRegistry[key]))
+        return colorMap[key]("*");
+      return "";
+    }).filter((x) => x);
     const isSame = item.alias === item.name;
-    return `${prefix + currect}${isSame ? item.alias : `${item.alias}(${kolorist.gray(item.name)})`}${geneDashLine(item.name, length)}${item.registry}`;
+    const str = `${prefix}${isSame ? item.alias : `${item.alias}(${kolorist.gray(item.name)})`}${geneDashLine(item.name, length)}${item.registry}`;
+    return `${currect.length > 0 ? padding(`${currect.join(" ")}`, 4 - currect.length, 1) : ""} ${padding(str, currect.length > 0 ? 0 : 4, 0)}`;
   });
+  messages.unshift(currentTip);
   printMessages(messages);
 };
 
-const defaultPackageManager = ["npm", "yarn", "cnpm", "pnpm"];
 const useUse = async (name, cmd) => {
   const userConfig = await getFileUser(registriesPath);
   let registrylist = defaultNpmMirror;

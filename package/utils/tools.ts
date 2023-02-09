@@ -1,5 +1,19 @@
 /* eslint-disable no-console */
 import { white } from 'kolorist';
+import type { UserInfoJson, UserOldInfoJson } from '../type/shell.type';
+
+export const transformData = (data: UserOldInfoJson): UserInfoJson => {
+  const userInfo: UserInfoJson = { version: '', users: [] };
+  Object.keys(data).forEach((x) => {
+    userInfo.users.push({
+      name: data[x].name,
+      email: data[x].email,
+      alias: data[x].name
+    });
+  });
+
+  return userInfo;
+};
 
 export const padding = (message = '', before = 1, after = 1) => {
   return (

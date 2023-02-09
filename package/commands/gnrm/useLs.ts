@@ -1,13 +1,36 @@
-import { gray, green } from 'kolorist';
+import { blue, gray, green, red, yellow } from 'kolorist';
 import prompts from 'prompts';
 import { registriesPath } from '../../config/path';
 import { getFileUser, writeFileUser } from '../../utils/getUserList';
-import { defaultNpmMirror } from '../../config/registry';
+import { defaultNpmMirror, defaultPackageManager } from '../../config/registry';
 import { execCommand } from '../../utils/shell';
-import { geneDashLine, printMessages } from '../../utils/tools';
+import { geneDashLine, padding, printMessages } from '../../utils/tools';
 import { log } from '../../utils/log';
 import { insertRegistry } from '../../utils/helper';
-import type { NrmCmd } from '../../type/shell.type';
+import type { NrmCmd, PackageManagertype } from '../../type/shell.type';
+
+const getRegistry = async (pkg: PackageManagertype) => {
+  return await execCommand(pkg, [
+    'config',
+    'get',
+    'registry'
+  ]).catch(() => {});
+};
+
+export const getRegistrys = async (pkgs: PackageManagertype[] = defaultPackageManager) => {
+  const registrys: {
+    [key in PackageManagertype]: string
+  } = {
+    npm: '',
+    pnpm: '',
+    cnpm: '',
+    yarn: ''
+  };
+  for (let i = 0; i < pkgs.length; i++)
+    registrys[pkgs[i]] = await getRegistry(pkgs[i]) || '';
+
+  return registrys;
+};
 
 export const useLs = async (cmd: NrmCmd) => {
   const userConfig = await getFileUser(registriesPath);
@@ -19,41 +42,38 @@ export const useLs = async (cmd: NrmCmd) => {
     }
     else { registryList = userConfig.registry; }
 
-  let packageManager = 'npm';
+  const pkgs: PackageManagertype[] = [];
+
   if (cmd.packageManager)
-    packageManager = cmd.packageManager;
-  // npm config get registry
+    pkgs.push(cmd.packageManager);
 
-  let currectRegistry = '';
-  try {
-    currectRegistry = await execCommand(packageManager, [
-      'config',
-      'get',
-      'registry'
-    ]);
-  }
-  catch (error) {
-    log.error(`${packageManager} is not found`);
-    return;
-  }
+  else
+    pkgs.push(...defaultPackageManager);
 
-  if (registryList.every(x => x.registry !== currectRegistry))
-    // 默认添加本地源
+  const currectRegistry = await getRegistrys(pkgs);
+
+  if (registryList.every(x => Object.values(currectRegistry).includes(x.registry)))
+  // 默认添加本地源
     try {
-      const { name } = await prompts({
-        type: 'text',
-        name: 'name',
-        message: `find new registry:${currectRegistry}, please give it a name`
+      const newRegistry = Object.keys(currectRegistry).map((x) => {
+        if (registryList.every(val => currectRegistry[x as PackageManagertype] && val.registry !== currectRegistry[x as PackageManagertype]))
+          return currectRegistry[x as PackageManagertype];
+        return '';
       });
-      await insertRegistry(name, name, currectRegistry);
-
-      log.info(`[found new registry]: ${currectRegistry}`);
-
-      registryList.push({
-        name,
-        registry: currectRegistry,
-        home: '',
-        alias: name
+      Array.from(new Set(newRegistry)).filter(x => x).forEach(async (registry) => {
+        const { name } = await prompts({
+          type: 'text',
+          name: 'name',
+          message: `find new registry:${currectRegistry}, please give it a name`
+        });
+        await insertRegistry(name, name, registry);
+        log.info(`[found new registry]: ${currectRegistry}`);
+        registryList.push({
+          name,
+          registry,
+          home: '',
+          alias: name
+        });
       });
     }
     catch (error) {}
@@ -64,17 +84,37 @@ export const useLs = async (cmd: NrmCmd) => {
         return x.alias.length + (x.alias !== x.name ? x.name.length : 0);
       })
     ) + 3;
-  const prefix = '  ';
+
+  const prefix = '';
+
+  const colorMap: Record<string, any> = {
+    npm: green,
+    cnpm: red,
+    yarn: blue,
+    pnpm: yellow
+  };
+
+  const currentTip = `current: ${Object.keys(currectRegistry).map((key) => {
+    if (currectRegistry[key as PackageManagertype])
+      return `${key}: ${colorMap[key]('*')}`;
+    return '';
+  }).filter(i => i).join(' ')}\n\n`;
 
   const messages = registryList.map((item) => {
-    const currect = item.registry === currectRegistry ? `${green('*')}` : ' ';
+    const currect = Object.keys(currectRegistry).map((key) => {
+      if (currectRegistry[key as PackageManagertype] && item.registry.includes(currectRegistry[key as PackageManagertype]))
+        return colorMap[key]('*');
+      return '';
+    }).filter(x => x);
 
     const isSame = item.alias === item.name;
-
-    return `${prefix + currect}${
+    const str = `${prefix}${
       isSame ? item.alias : `${item.alias}(${gray(item.name)})`
     }${geneDashLine(item.name, length)}${item.registry}`;
+    return `${currect.length > 0 ? padding(`${currect.join(' ')}`, 4 - currect.length, 1) : ''} ${padding(str, currect.length > 0 ? 0 : 4, 0)}`;
   });
+
+  messages.unshift(currentTip);
 
   printMessages(messages);
 };

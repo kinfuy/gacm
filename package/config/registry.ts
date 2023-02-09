@@ -1,4 +1,6 @@
-import type { RegistryInfo } from '../type/shell.type';
+import type { PackageManagertype, RegistryInfo } from '../type/shell.type';
+
+export const defaultPackageManager = ['npm', 'yarn', 'cnpm', 'pnpm'] as PackageManagertype[];
 
 export const defaultNpmMirror: RegistryInfo[] = [
   {

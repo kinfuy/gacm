@@ -7,19 +7,7 @@ import type {
 } from '../type/shell.type';
 import { getFileUser, writeFileUser } from './getUserList';
 import { log } from './log';
-
-export const transformData = (data: UserOldInfoJson): UserInfoJson => {
-  const userInfo: UserInfoJson = { version: '', users: [] };
-  Object.keys(data).forEach((x) => {
-    userInfo.users.push({
-      name: data[x].name,
-      email: data[x].email,
-      alias: data[x].name
-    });
-  });
-
-  return userInfo;
-};
+import { transformData } from './tools';
 
 export const isExistAlias = (
   users: UserInfo[],
