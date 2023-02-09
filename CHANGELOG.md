@@ -1,3 +1,9 @@
+# [v1.2.7](https://github.com/alqmc/gacm/compare/v1.2.6...v1.2.7)（2023-02-09）
+
+
+## What's Changed
+  - Feat: the new ui shows the current registry ([#23](https://github.com/alqmc/gacm/pull/#23))
+  - Fix: gnrm use pkg not found error tips ([8b747a1](https://github.com/alqmc/gacm/commit/8b747a1))
 # [v1.2.6](https://github.com/alqmc/gacm/compare/v1.2.5...v1.2.6)（2023-01-30）
 
 
