@@ -17,7 +17,7 @@ var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name$1 = "gacm";
-var version$1 = "1.2.6";
+var version$1 = "1.2.7";
 var description$1 = "git account manage";
 var author$1 = "alqmc";
 var license$1 = "MIT";
@@ -170,7 +170,7 @@ const execCommand = async (cmd, args) => {
 };
 
 var name = "gacm";
-var version = "1.2.6";
+var version = "1.2.7";
 var description = "gacm";
 var author = "alqmc";
 var license = "MIT";
@@ -396,15 +396,16 @@ const useUse = async (name, cmd) => {
     return log.error(`${name} not found`);
   if (cmd.packageManager)
     packageManager = cmd.packageManager;
-  await execCommand(packageManager, [
+  execCommand(packageManager, [
     "config",
     "set",
     "registry",
     useRegistry.registry
-  ]).catch(() => {
+  ]).then(() => {
+    log.success(`${packageManager} registry has been set to:  ${useRegistry.registry}`);
+  }).catch(() => {
     log.error(`${packageManager} is not found`);
   });
-  log.success(`${packageManager} registry has been set to:  ${useRegistry.registry}`);
 };
 
 const useAdd = async (cmd) => {

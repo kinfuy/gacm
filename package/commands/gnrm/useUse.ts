@@ -59,16 +59,16 @@ export const useUse = async (name: string, cmd: NrmCmd) => {
   if (cmd.packageManager)
     packageManager = cmd.packageManager;
 
-  await execCommand(packageManager, [
+  execCommand(packageManager, [
     'config',
     'set',
     'registry',
     useRegistry.registry
-  ]).catch(() => {
+  ]).then(() => {
+    log.success(
+      `${packageManager} registry has been set to:  ${useRegistry!.registry}`
+    );
+  }).catch(() => {
     log.error(`${packageManager} is not found`);
   });
-
-  log.success(
-    `${packageManager} registry has been set to:  ${useRegistry.registry}`
-  );
 };
