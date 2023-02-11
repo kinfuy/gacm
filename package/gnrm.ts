@@ -26,4 +26,6 @@ program.command('alias <origin> <target>', '镜像添加别名').action(useAlias
 
 program.command('delete <name>', '删除镜像').action(useDelete);
 
+program.help();
+
 program.parse(process.argv);
