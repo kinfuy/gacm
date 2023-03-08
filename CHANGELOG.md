@@ -1,3 +1,9 @@
+# [v1.2.8](https://github.com/alqmc/gacm/compare/v1.2.7...v1.2.8)（2023-03-08）
+
+
+## What's Changed
+  - Feat: command --help ([5c29a6e](https://github.com/alqmc/gacm/commit/5c29a6e))
+  - Perf: 提升gnrm ls 执行效率 ([c2ec9bb](https://github.com/alqmc/gacm/commit/c2ec9bb))
 # [v1.2.7](https://github.com/alqmc/gacm/compare/v1.2.6...v1.2.7)（2023-02-09）
 
 
