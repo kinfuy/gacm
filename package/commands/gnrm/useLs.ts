@@ -26,8 +26,16 @@ export const getRegistrys = async (pkgs: PackageManagertype[] = defaultPackageMa
     cnpm: '',
     yarn: ''
   };
-  for (let i = 0; i < pkgs.length; i++)
-    registrys[pkgs[i]] = await getRegistry(pkgs[i]) || '';
+  const list = pkgs.map(async (pkg) => {
+    return {
+      pkg,
+      handle: await getRegistry(pkg)
+    };
+  });
+  for (const iterator of list) {
+    const itme = await iterator;
+    registrys[itme.pkg] = itme.handle || '';
+  }
 
   return registrys;
 };

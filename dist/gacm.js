@@ -111,7 +111,7 @@ const execCommand = async (cmd, args) => {
 };
 
 var name$1 = "gacm";
-var version$1 = "1.2.7";
+var version$1 = "1.2.8";
 var description$1 = "gacm";
 var author$1 = "alqmc";
 var license$1 = "MIT";
@@ -203,7 +203,7 @@ const insertUser = async (name, email, alias = name) => {
 };
 
 var name = "gacm";
-var version = "1.2.7";
+var version = "1.2.8";
 var description = "git account manage";
 var author = "alqmc";
 var license = "MIT";
@@ -358,4 +358,5 @@ program.command("use [name]", "\u5207\u6362\u7528\u6237").option("-l, --local", 
 program.command("add", "\u6DFB\u52A0\u7528\u6237").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").action(useAdd);
 program.command("alias <origin> <target>", "\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>", "\u5220\u9664\u7528\u6237").action(useDelete);
+program.help();
 program.parse(process.argv);

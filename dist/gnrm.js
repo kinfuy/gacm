@@ -17,7 +17,7 @@ var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 
 var name$1 = "gacm";
-var version$1 = "1.2.7";
+var version$1 = "1.2.8";
 var description$1 = "git account manage";
 var author$1 = "alqmc";
 var license$1 = "MIT";
@@ -170,7 +170,7 @@ const execCommand = async (cmd, args) => {
 };
 
 var name = "gacm";
-var version = "1.2.7";
+var version = "1.2.8";
 var description = "gacm";
 var author = "alqmc";
 var license = "MIT";
@@ -276,8 +276,18 @@ const getRegistrys = async (pkgs = defaultPackageManager) => {
     cnpm: "",
     yarn: ""
   };
-  for (let i = 0; i < pkgs.length; i++)
-    registrys[pkgs[i]] = await getRegistry(pkgs[i]) || "";
+  console.time("test");
+  const list = pkgs.map(async (pkg) => {
+    return {
+      pkg,
+      handle: await getRegistry(pkg)
+    };
+  });
+  for (const iterator of list) {
+    const itme = await iterator;
+    registrys[itme.pkg] = itme.handle || "";
+  }
+  console.timeEnd("test");
   return registrys;
 };
 const useLs = async (cmd) => {
@@ -464,4 +474,5 @@ program.command("use [name]", "\u5207\u6362\u955C\u50CF\u6E90").option("-p, --pa
 program.command("add", "\u6DFB\u52A0\u955C\u50CF").option("-n, --name <name>", "\u955C\u50CF\u540D\u79F0").option("-r, --registry <registry>", "\u955C\u50CF\u5730\u5740").option("-a, --alias <alias>", "\u955C\u50CF\u522B\u540D").action(useAdd);
 program.command("alias <origin> <target>", "\u955C\u50CF\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>", "\u5220\u9664\u955C\u50CF").action(useDelete);
+program.help();
 program.parse(process.argv);
