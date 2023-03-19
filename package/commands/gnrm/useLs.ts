@@ -104,14 +104,14 @@ export const useLs = async (cmd: NrmCmd) => {
 
   const currentTip = `current: ${Object.keys(currectRegistry).map((key) => {
     if (currectRegistry[key as PackageManagertype])
-      return `${key}: ${colorMap[key]('*')}`;
+      return `${key}: ${colorMap[key]('■')}`;
     return '';
   }).filter(i => i).join(' ')}\n\n`;
 
   const messages = registryList.map((item) => {
     const currect = Object.keys(currectRegistry).map((key) => {
       if (currectRegistry[key as PackageManagertype] && item.registry.includes(currectRegistry[key as PackageManagertype]))
-        return colorMap[key]('*');
+        return colorMap[key]('■');
       return '';
     }).filter(x => x);
 

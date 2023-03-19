@@ -276,7 +276,6 @@ const getRegistrys = async (pkgs = defaultPackageManager) => {
     cnpm: "",
     yarn: ""
   };
-  console.time("test");
   const list = pkgs.map(async (pkg) => {
     return {
       pkg,
@@ -287,7 +286,6 @@ const getRegistrys = async (pkgs = defaultPackageManager) => {
     const itme = await iterator;
     registrys[itme.pkg] = itme.handle || "";
   }
-  console.timeEnd("test");
   return registrys;
 };
 const useLs = async (cmd) => {
@@ -338,11 +336,11 @@ const useLs = async (cmd) => {
     npm: kolorist.green,
     cnpm: kolorist.red,
     yarn: kolorist.blue,
-    pnpm: kolorist.yellow
+    pnpm: kolorist.lightYellow
   };
   const currentTip = `current: ${Object.keys(currectRegistry).map((key) => {
     if (currectRegistry[key])
-      return `${key}: ${colorMap[key]("*")}`;
+      return `${key}: ${colorMap[key]("\u25A0")}`;
     return "";
   }).filter((i) => i).join(" ")}
 
@@ -350,7 +348,7 @@ const useLs = async (cmd) => {
   const messages = registryList.map((item) => {
     const currect = Object.keys(currectRegistry).map((key) => {
       if (currectRegistry[key] && item.registry.includes(currectRegistry[key]))
-        return colorMap[key]("*");
+        return colorMap[key]("\u25A0");
       return "";
     }).filter((x) => x);
     const isSame = item.alias === item.name;
