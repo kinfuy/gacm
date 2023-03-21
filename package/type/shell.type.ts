@@ -23,3 +23,7 @@ export type PackageManagertype = 'pnpm' | 'npm' | 'cnpm' | 'yarn';
 export interface NrmCmd {
   packageManager: PackageManagertype
 }
+
+export interface TestCmd extends NrmCmd {
+  all: boolean
+}

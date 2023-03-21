@@ -4,17 +4,19 @@
 var cac = require('cac');
 var kolorist = require('kolorist');
 var prompts = require('prompts');
-var path = require('path');
 var fs = require('fs');
+var path = require('path');
 require('child_process');
 require('process');
 var execa = require('execa');
+var fetch = require('node-fetch');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var cac__default = /*#__PURE__*/_interopDefaultLegacy(cac);
 var prompts__default = /*#__PURE__*/_interopDefaultLegacy(prompts);
 var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
+var fetch__default = /*#__PURE__*/_interopDefaultLegacy(fetch);
 
 var name$1 = "gacm";
 var version$1 = "1.2.8";
@@ -37,7 +39,8 @@ var dependencies$1 = {
 	cac: "^6.7.14",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
-	prompts: "^2.4.2"
+	prompts: "^2.4.2",
+	"node-fetch": "2.6.6"
 };
 var pkg$1 = {
 	name: name$1,
@@ -61,6 +64,46 @@ __dirname;
 path.resolve(rootPath, "package");
 const HOME = process.env[process.platform === "win32" ? "USERPROFILE" : "HOME"] || "";
 const registriesPath = path.join(HOME, ".gacmrc");
+
+const defaultPackageManager = ["npm", "yarn", "cnpm", "pnpm"];
+const defaultNpmMirror = [
+  {
+    name: "npm",
+    alias: "npm",
+    home: "https://www.npmjs.org",
+    registry: "https://registry.npmjs.org/"
+  },
+  {
+    name: "yarn",
+    alias: "yarn",
+    home: "https://yarnpkg.com",
+    registry: "https://registry.yarnpkg.com/"
+  },
+  {
+    name: "tencent",
+    alias: "tencent",
+    home: "https://mirrors.cloud.tencent.com/npm/",
+    registry: "https://mirrors.cloud.tencent.com/npm/"
+  },
+  {
+    name: "cnpm",
+    alias: "cnpm",
+    home: "https://cnpmjs.org",
+    registry: "https://r.cnpmjs.org/"
+  },
+  {
+    name: "taobao",
+    alias: "taobao",
+    home: "https://npmmirror.com",
+    registry: "https://registry.npmmirror.com/"
+  },
+  {
+    name: "npmMirror",
+    alias: "npmMirror",
+    home: "https://skimdb.npmjs.com/",
+    registry: "https://skimdb.npmjs.com/registry/"
+  }
+];
 
 const success = (msg) => console.log(`
 ${kolorist.green(msg)}
@@ -123,46 +166,18 @@ async function writeFileUser(dir, data) {
     process.exit(0);
   });
 }
-
-const defaultPackageManager = ["npm", "yarn", "cnpm", "pnpm"];
-const defaultNpmMirror = [
-  {
-    name: "npm",
-    alias: "npm",
-    home: "https://www.npmjs.org",
-    registry: "https://registry.npmjs.org/"
-  },
-  {
-    name: "yarn",
-    alias: "yarn",
-    home: "https://yarnpkg.com",
-    registry: "https://registry.yarnpkg.com/"
-  },
-  {
-    name: "tencent",
-    alias: "tencent",
-    home: "https://mirrors.cloud.tencent.com/npm/",
-    registry: "https://mirrors.cloud.tencent.com/npm/"
-  },
-  {
-    name: "cnpm",
-    alias: "cnpm",
-    home: "https://cnpmjs.org",
-    registry: "https://r.cnpmjs.org/"
-  },
-  {
-    name: "taobao",
-    alias: "taobao",
-    home: "https://npmmirror.com",
-    registry: "https://registry.npmmirror.com/"
-  },
-  {
-    name: "npmMirror",
-    alias: "npmMirror",
-    home: "https://skimdb.npmjs.com/",
-    registry: "https://skimdb.npmjs.com/registry/"
-  }
-];
+const checkRegistry = async () => {
+  const userConfig = await getFileUser(registriesPath);
+  let registryList = defaultNpmMirror;
+  if (userConfig)
+    if (!userConfig.registry || userConfig.registry.length === 0) {
+      userConfig.registry = registryList;
+      writeFileUser(registriesPath, userConfig);
+    } else {
+      registryList = userConfig.registry;
+    }
+  return registryList;
+};
 
 const execCommand = async (cmd, args) => {
   const res = await execa__default["default"](cmd, args);
@@ -189,6 +204,7 @@ var dependencies = {
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
 	minimist: "^1.2.6",
+	"node-fetch": "2.6.6",
 	prompts: "^2.4.2"
 };
 var devDependencies = {
@@ -201,6 +217,7 @@ var devDependencies = {
 	"@types/fs-extra": "^9.0.13",
 	"@types/gulp": "^4.0.9",
 	"@types/node": "^17.0.21",
+	"@types/node-fetch": "^2.6.2",
 	"@types/prompts": "^2.0.14",
 	cac: "^6.7.14",
 	changeloger: "0.1.0",
@@ -289,15 +306,7 @@ const getRegistrys = async (pkgs = defaultPackageManager) => {
   return registrys;
 };
 const useLs = async (cmd) => {
-  const userConfig = await getFileUser(registriesPath);
-  let registryList = defaultNpmMirror;
-  if (userConfig)
-    if (!userConfig.registry || userConfig.registry.length === 0) {
-      userConfig.registry = registryList;
-      writeFileUser(registriesPath, userConfig);
-    } else {
-      registryList = userConfig.registry;
-    }
+  const registryList = await checkRegistry();
   const pkgs = [];
   if (cmd.packageManager)
     pkgs.push(cmd.packageManager);
@@ -336,7 +345,7 @@ const useLs = async (cmd) => {
     npm: kolorist.green,
     cnpm: kolorist.red,
     yarn: kolorist.blue,
-    pnpm: kolorist.lightYellow
+    pnpm: kolorist.yellow
   };
   const currentTip = `current: ${Object.keys(currectRegistry).map((key) => {
     if (currectRegistry[key])
@@ -465,10 +474,77 @@ const useDelete = async (name) => {
   await writeFileUser(registriesPath, userConfig);
 };
 
+const testRegistry = async (registry) => {
+  const start = Date.now();
+  const options = {
+    timeout: 5e3
+  };
+  let status = false;
+  let isTimeout = false;
+  try {
+    const response = await fetch__default["default"](registry, {
+      ...options
+    });
+    status = response.ok;
+  } catch (error) {
+    console.log(error);
+    isTimeout = error.type === "request-timeout";
+  }
+  return {
+    status,
+    isTimeout,
+    start
+  };
+};
+const useTest = async (cmd) => {
+  const registryList = await checkRegistry();
+  const test = async (registry2) => {
+    const { status, start, isTimeout } = await testRegistry(new URL("", registry2.registry).href);
+    if (isTimeout)
+      log.error("timeout");
+    if (status) {
+      const end = Date.now();
+      console.log(`
+ ${kolorist.green(`\u3010${end - start}ms\u3011`)} ping ${registry2.alias}${registry2.alias === registry2.name ? "" : `${kolorist.gray(`(${registry2.name})`)}`}\uFF1A${registry2.registry}`);
+    }
+  };
+  if (cmd.all) {
+    const list = registryList.map(async (r) => {
+      return {
+        handle: await test(r)
+      };
+    });
+    for (const iterator of list)
+      await iterator;
+    return;
+  }
+  if (cmd.packageManager) {
+    const registry2 = registryList.find((x) => x.alias === cmd.packageManager);
+    if (registry2)
+      await test(registry2);
+    return;
+  }
+  const { registry } = await prompts__default["default"]([
+    {
+      type: "select",
+      name: "registry",
+      message: "Pick a registry",
+      choices: registryList.map((x) => {
+        return {
+          title: `${x.alias}${x.alias === x.name ? "" : `(${x.name})`} ${x.registry}`,
+          value: x
+        };
+      })
+    }
+  ]);
+  await test(registry.registry);
+};
+
 const program = cac__default["default"]("gnrm");
 program.version(useVersion());
 program.command("ls", "\u5F53\u524D\u7528\u6237\u5217\u8868").option("-p, --packageManager <packageManager>", "\u67E5\u770B\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useLs);
 program.command("use [name]", "\u5207\u6362\u955C\u50CF\u6E90").option("-p, --packageManager <packageManager>", "\u8BBE\u7F6E\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useUse);
+program.command("test", "\u5207\u6362\u955C\u50CF\u6E90").option("-p, --packageManager <packageManager>", "\u6D4B\u8BD5\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").option("-a, --all", "\u6D4B\u8BD5\u5B58\u5728\u7684\u955C\u50CF\u6E90").action(useTest);
 program.command("add", "\u6DFB\u52A0\u955C\u50CF").option("-n, --name <name>", "\u955C\u50CF\u540D\u79F0").option("-r, --registry <registry>", "\u955C\u50CF\u5730\u5740").option("-a, --alias <alias>", "\u955C\u50CF\u522B\u540D").action(useAdd);
 program.command("alias <origin> <target>", "\u955C\u50CF\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>", "\u5220\u9664\u955C\u50CF").action(useDelete);

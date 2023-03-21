@@ -1,6 +1,6 @@
 import cac from 'cac';
 import { useVersion } from './commands/common/useVersion';
-import { useAdd, useAlias, useDelete, useLs, useUse } from './commands/gnrm';
+import { useAdd, useAlias, useDelete, useLs, useTest, useUse } from './commands/gnrm';
 
 const program = cac('gnrm');
 program.version(useVersion());
@@ -14,6 +14,12 @@ program
   .command('use [name]', '切换镜像源')
   .option('-p, --packageManager <packageManager>', '设置对应包管理器：默认npm')
   .action(useUse);
+
+program
+  .command('test', '切换镜像源')
+  .option('-p, --packageManager <packageManager>', '测试对应包管理器：默认npm')
+  .option('-a, --all', '测试存在的镜像源')
+  .action(useTest);
 
 program
   .command('add', '添加镜像')

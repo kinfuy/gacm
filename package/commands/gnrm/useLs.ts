@@ -1,8 +1,7 @@
 import { blue, gray, green, red, yellow } from 'kolorist';
 import prompts from 'prompts';
-import { registriesPath } from '../../config/path';
-import { getFileUser, writeFileUser } from '../../utils/getUserList';
-import { defaultNpmMirror, defaultPackageManager } from '../../config/registry';
+import { checkRegistry } from '../../utils/getUserList';
+import { defaultPackageManager } from '../../config/registry';
 import { execCommand } from '../../utils/shell';
 import { geneDashLine, padding, printMessages } from '../../utils/tools';
 import { log } from '../../utils/log';
@@ -41,14 +40,7 @@ export const getRegistrys = async (pkgs: PackageManagertype[] = defaultPackageMa
 };
 
 export const useLs = async (cmd: NrmCmd) => {
-  const userConfig = await getFileUser(registriesPath);
-  let registryList = defaultNpmMirror;
-  if (userConfig)
-    if (!userConfig.registry || userConfig.registry.length === 0) {
-      userConfig.registry = registryList;
-      writeFileUser(registriesPath, userConfig);
-    }
-    else { registryList = userConfig.registry; }
+  const registryList = await checkRegistry();
 
   const pkgs: PackageManagertype[] = [];
 

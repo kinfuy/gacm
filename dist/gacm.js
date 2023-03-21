@@ -130,6 +130,7 @@ var dependencies$1 = {
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
 	minimist: "^1.2.6",
+	"node-fetch": "2.6.6",
 	prompts: "^2.4.2"
 };
 var devDependencies = {
@@ -142,6 +143,7 @@ var devDependencies = {
 	"@types/fs-extra": "^9.0.13",
 	"@types/gulp": "^4.0.9",
 	"@types/node": "^17.0.21",
+	"@types/node-fetch": "^2.6.2",
 	"@types/prompts": "^2.0.14",
 	cac: "^6.7.14",
 	changeloger: "0.1.0",
@@ -223,7 +225,8 @@ var dependencies = {
 	cac: "^6.7.14",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
-	prompts: "^2.4.2"
+	prompts: "^2.4.2",
+	"node-fetch": "2.6.6"
 };
 var pkg = {
 	name: name,

@@ -1,4 +1,6 @@
 import { existsSync, promises } from 'fs';
+import { registriesPath } from '../config/path';
+import { defaultNpmMirror } from '../config/registry';
 import type { UserInfoJson, UserOldInfoJson } from '../type/shell.type';
 import { log } from './log';
 import { transformData } from './tools';
@@ -35,3 +37,19 @@ export async function writeFileUser(dir: string, data: UserInfoJson) {
     process.exit(0);
   });
 }
+
+/**
+ * 检查是否写入过Registry
+ * @returns Registrys
+ */
+export const checkRegistry = async () => {
+  const userConfig = await getFileUser(registriesPath);
+  let registryList = defaultNpmMirror;
+  if (userConfig)
+    if (!userConfig.registry || userConfig.registry.length === 0) {
+      userConfig.registry = registryList;
+      writeFileUser(registriesPath, userConfig);
+    }
+    else { registryList = userConfig.registry; }
+  return registryList;
+};
