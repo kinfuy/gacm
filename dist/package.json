@@ -21,7 +21,7 @@
     "cac": "^6.7.14",
     "execa": "5.1.1",
     "kolorist": "^1.5.1",
-    "prompts": "^2.4.2",
-    "node-fetch": "2.6.6"
+    "node-fetch": "2.6.6",
+    "prompts": "^2.4.2"
   }
 }

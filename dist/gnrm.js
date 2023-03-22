@@ -39,8 +39,8 @@ var dependencies$1 = {
 	cac: "^6.7.14",
 	execa: "5.1.1",
 	kolorist: "^1.5.1",
-	prompts: "^2.4.2",
-	"node-fetch": "2.6.6"
+	"node-fetch": "2.6.6",
+	prompts: "^2.4.2"
 };
 var pkg$1 = {
 	name: name$1,
@@ -487,7 +487,6 @@ const testRegistry = async (registry) => {
     });
     status = response.ok;
   } catch (error) {
-    console.log(error);
     isTimeout = error.type === "request-timeout";
   }
   return {
@@ -518,8 +517,8 @@ const useTest = async (cmd) => {
       await iterator;
     return;
   }
-  if (cmd.packageManager) {
-    const registry2 = registryList.find((x) => x.alias === cmd.packageManager);
+  if (cmd.registry) {
+    const registry2 = registryList.find((x) => x.alias === cmd.registry || x.name === cmd.registry);
     if (registry2)
       await test(registry2);
     return;
@@ -537,14 +536,14 @@ const useTest = async (cmd) => {
       })
     }
   ]);
-  await test(registry.registry);
+  await test(registry);
 };
 
 const program = cac__default["default"]("gnrm");
 program.version(useVersion());
 program.command("ls", "\u5F53\u524D\u7528\u6237\u5217\u8868").option("-p, --packageManager <packageManager>", "\u67E5\u770B\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useLs);
-program.command("use [name]", "\u5207\u6362\u955C\u50CF\u6E90").option("-p, --packageManager <packageManager>", "\u8BBE\u7F6E\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useUse);
-program.command("test", "\u5207\u6362\u955C\u50CF\u6E90").option("-p, --packageManager <packageManager>", "\u6D4B\u8BD5\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").option("-a, --all", "\u6D4B\u8BD5\u5B58\u5728\u7684\u955C\u50CF\u6E90").action(useTest);
+program.command("use [name]", "\u5207\u6362\u955C\u50CF\u6E90").option("-p, --registry <packageManager>", "\u8BBE\u7F6E\u5BF9\u5E94\u5305\u7BA1\u7406\u5668\uFF1A\u9ED8\u8BA4npm").action(useUse);
+program.command("test", "\u5207\u6362\u955C\u50CF\u6E90").option("-r, --registry <registry>", "\u6D4B\u8BD5\u6E90\u540D\u79F0\u6216\u8005\u522B\u540D").option("-a, --all", "\u6D4B\u8BD5\u5B58\u5728\u7684\u955C\u50CF\u6E90").action(useTest);
 program.command("add", "\u6DFB\u52A0\u955C\u50CF").option("-n, --name <name>", "\u955C\u50CF\u540D\u79F0").option("-r, --registry <registry>", "\u955C\u50CF\u5730\u5740").option("-a, --alias <alias>", "\u955C\u50CF\u522B\u540D").action(useAdd);
 program.command("alias <origin> <target>", "\u955C\u50CF\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>", "\u5220\u9664\u955C\u50CF").action(useDelete);

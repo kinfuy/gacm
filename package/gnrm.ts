@@ -12,12 +12,12 @@ program
 
 program
   .command('use [name]', '切换镜像源')
-  .option('-p, --packageManager <packageManager>', '设置对应包管理器：默认npm')
+  .option('-p, --registry <packageManager>', '设置对应包管理器：默认npm')
   .action(useUse);
 
 program
   .command('test', '切换镜像源')
-  .option('-p, --packageManager <packageManager>', '测试对应包管理器：默认npm')
+  .option('-r, --registry <registry>', '测试源名称或者别名')
   .option('-a, --all', '测试存在的镜像源')
   .action(useTest);
 

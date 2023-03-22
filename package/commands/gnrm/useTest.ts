@@ -19,8 +19,6 @@ const testRegistry = async (registry: string) => {
     status = response.ok;
   }
   catch (error: any) {
-    // eslint-disable-next-line no-console
-    console.log(error);
     isTimeout = error.type === 'request-timeout';
   }
   return {
@@ -55,8 +53,8 @@ export const useTest = async (cmd: TestCmd) => {
     return;
   }
 
-  if (cmd.packageManager) {
-    const registry = registryList.find(x => x.alias === cmd.packageManager);
+  if (cmd.registry) {
+    const registry = registryList.find(x => x.alias === cmd.registry || x.name === cmd.registry);
     if (registry)
       await test(registry);
 
@@ -79,5 +77,5 @@ export const useTest = async (cmd: TestCmd) => {
     }
   ]);
 
-  await test(registry.registry);
+  await test(registry);
 };
