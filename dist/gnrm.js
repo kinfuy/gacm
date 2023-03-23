@@ -19,7 +19,7 @@ var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var fetch__default = /*#__PURE__*/_interopDefaultLegacy(fetch);
 
 var name$1 = "gacm";
-var version$1 = "1.2.8";
+var version$1 = "1.2.9";
 var description$1 = "git account manage";
 var author$1 = "alqmc";
 var license$1 = "MIT";
@@ -185,7 +185,7 @@ const execCommand = async (cmd, args) => {
 };
 
 var name = "gacm";
-var version = "1.2.8";
+var version = "1.2.9";
 var description = "gacm";
 var author = "alqmc";
 var license = "MIT";

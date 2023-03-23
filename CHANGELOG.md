@@ -1,3 +1,10 @@
+# [v1.2.9](https://github.com/alqmc/gacm/compare/v1.2.8...v1.2.9)（2023-03-22）
+
+
+## What's Changed
+  - Feat: gnrm test registry ([4e4c132](https://github.com/alqmc/gacm/commit/4e4c132))
+  - Fix: 当前源标记白色主题不明显 ([b5f6f79](https://github.com/alqmc/gacm/commit/b5f6f79))
+  - Fix: gnrm test options  -r ([4ddd7df](https://github.com/alqmc/gacm/commit/4ddd7df))
 # [v1.2.8](https://github.com/alqmc/gacm/compare/v1.2.7...v1.2.8)（2023-03-08）
 
 
