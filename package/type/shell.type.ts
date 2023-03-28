@@ -21,9 +21,10 @@ export interface UserOldInfoJson extends Record<string, any> {
 
 export type PackageManagertype = 'pnpm' | 'npm' | 'cnpm' | 'yarn';
 export interface NrmCmd {
-  registry: string
+  packageManager: PackageManagertype
 }
 
-export interface TestCmd extends NrmCmd {
+export interface TestCmd {
+  registry: string
   all: boolean
 }

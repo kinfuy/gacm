@@ -261,7 +261,7 @@ const useLs = async () => {
   const length = Math.max(...userList.users.map((user) => user.alias.length + (user.alias !== user.name ? user.name.length : 0))) + 3;
   const prefix = "  ";
   const messages = userList.users.map((user) => {
-    const currect = user.name === currectUser && user.email === currectEmail ? `${kolorist.green("*")}` : " ";
+    const currect = user.name === currectUser && user.email === currectEmail ? `${kolorist.green("\u25A0")} ` : "  ";
     const isSame = user.alias === user.name;
     return `${prefix + currect}${isSame ? user.alias : `${user.alias}(${kolorist.gray(user.name)})`}${geneDashLine(user.name, length)}${user.email}`;
   });

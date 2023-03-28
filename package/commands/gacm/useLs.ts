@@ -49,8 +49,8 @@ export const useLs = async () => {
   const messages = userList.users.map((user) => {
     const currect
       = user.name === currectUser && user.email === currectEmail
-        ? `${green('*')}`
-        : ' ';
+        ? `${green('■')} `
+        : '  ';
 
     const isSame = user.alias === user.name;
 
