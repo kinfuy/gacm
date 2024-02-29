@@ -1,9 +1,8 @@
 import prompts from 'prompts';
 import fetch from 'node-fetch';
-import { gray, green } from 'kolorist';
+import { gray, green, red } from 'kolorist';
 import type { RegistryInfo, TestCmd } from '../../type/shell.type';
 import { checkRegistry } from '../../utils/getUserList';
-import { log } from '../../utils/log';
 
 const testRegistry = async (registry: string) => {
   const start = Date.now();
@@ -33,7 +32,10 @@ export const useTest = async (cmd: TestCmd) => {
 
   const test = async (registry: RegistryInfo) => {
     const { status, start, isTimeout } = await testRegistry(new URL('', registry.registry).href);
-    if (isTimeout) log.error('timeout');
+    if (isTimeout)
+    // eslint-disable-next-line no-console
+      console.log((`\n ${red('【Timeout】')} ping ${registry.alias}${registry.alias === registry.name ? '' : `${gray(`(${registry.name})`)}`}：${registry.registry}`));
+
     if (status) {
       const end = Date.now();
       // eslint-disable-next-line no-console
