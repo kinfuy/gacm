@@ -19,7 +19,7 @@ var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var fetch__default = /*#__PURE__*/_interopDefaultLegacy(fetch);
 
 var name$1 = "gacm";
-var version$1 = "1.2.9";
+var version$1 = "1.2.10";
 var description$1 = "git account manage";
 var author$1 = "alqmc";
 var license$1 = "MIT";
@@ -185,7 +185,7 @@ const execCommand = async (cmd, args) => {
 };
 
 var name = "gacm";
-var version = "1.2.9";
+var version = "1.2.10";
 var description = "gacm";
 var author = "alqmc";
 var license = "MIT";
@@ -500,7 +500,8 @@ const useTest = async (cmd) => {
   const test = async (registry2) => {
     const { status, start, isTimeout } = await testRegistry(new URL("", registry2.registry).href);
     if (isTimeout)
-      log.error("timeout");
+      console.log(`
+ ${kolorist.red("\u3010Timeout\u3011")} ping ${registry2.alias}${registry2.alias === registry2.name ? "" : `${kolorist.gray(`(${registry2.name})`)}`}\uFF1A${registry2.registry}`);
     if (status) {
       const end = Date.now();
       console.log(`
