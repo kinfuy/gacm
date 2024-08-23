@@ -111,7 +111,7 @@ const execCommand = async (cmd, args) => {
 };
 
 var name$1 = "gacm";
-var version$1 = "1.2.9";
+var version$1 = "1.2.10";
 var description$1 = "gacm";
 var author$1 = "alqmc";
 var license$1 = "MIT";
@@ -205,7 +205,7 @@ const insertUser = async (name, email, alias = name) => {
 };
 
 var name = "gacm";
-var version = "1.2.9";
+var version = "1.2.10";
 var description = "git account manage";
 var author = "alqmc";
 var license = "MIT";
