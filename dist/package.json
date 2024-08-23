@@ -3,8 +3,9 @@
   "version": "1.2.10",
   "private": false,
   "description": "git account manage",
-  "author": "alqmc",
+  "author": "kinfuy (https://github.com/kinfuy)",
   "license": "MIT",
+  "repository": "https://github.com/kinfuy/vite-plugin-shortcuts",
   "keywords": [
     "git",
     "account",

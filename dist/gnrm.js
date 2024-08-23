@@ -21,8 +21,9 @@ var fetch__default = /*#__PURE__*/_interopDefaultLegacy(fetch);
 var name$1 = "gacm";
 var version$1 = "1.2.10";
 var description$1 = "git account manage";
-var author$1 = "alqmc";
+var author$1 = "kinfuy (https://github.com/kinfuy)";
 var license$1 = "MIT";
+var repository = "https://github.com/kinfuy/vite-plugin-shortcuts";
 var keywords = [
 	"git",
 	"account",
@@ -49,6 +50,7 @@ var pkg$1 = {
 	description: description$1,
 	author: author$1,
 	license: license$1,
+	repository: repository,
 	keywords: keywords,
 	bin: bin,
 	publishConfig: publishConfig,

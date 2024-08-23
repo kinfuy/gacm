@@ -207,8 +207,9 @@ const insertUser = async (name, email, alias = name) => {
 var name = "gacm";
 var version = "1.2.10";
 var description = "git account manage";
-var author = "alqmc";
+var author = "kinfuy (https://github.com/kinfuy)";
 var license = "MIT";
+var repository = "https://github.com/kinfuy/vite-plugin-shortcuts";
 var keywords = [
 	"git",
 	"account",
@@ -235,6 +236,7 @@ var pkg = {
 	description: description,
 	author: author,
 	license: license,
+	repository: repository,
 	keywords: keywords,
 	bin: bin,
 	publishConfig: publishConfig,
