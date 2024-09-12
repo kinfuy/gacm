@@ -111,7 +111,7 @@ const execCommand = async (cmd, args) => {
 };
 
 var name$1 = "gacm";
-var version$1 = "1.2.10";
+var version$1 = "1.2.11";
 var description$1 = "gacm";
 var author$1 = "alqmc";
 var license$1 = "MIT";
@@ -205,7 +205,7 @@ const insertUser = async (name, email, alias = name) => {
 };
 
 var name = "gacm";
-var version = "1.2.10";
+var version = "1.2.11";
 var description = "git account manage";
 var author = "alqmc";
 var license = "MIT";
@@ -362,4 +362,14 @@ program.command("add", "\u6DFB\u52A0\u7528\u6237").option("-n, --name <name>", "
 program.command("alias <origin> <target>", "\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>", "\u5220\u9664\u7528\u6237").action(useDelete);
 program.help();
-program.parse(process.argv);
+const init = async () => {
+  try {
+    program.parse(process.argv, { run: false });
+    await program.runMatchedCommand();
+  } catch (error) {
+    console.error(error?.message || "\u672A\u77E5\u9519\u8BEF");
+    program.outputHelp();
+    process.exit(0);
+  }
+};
+init();

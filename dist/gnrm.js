@@ -19,7 +19,7 @@ var execa__default = /*#__PURE__*/_interopDefaultLegacy(execa);
 var fetch__default = /*#__PURE__*/_interopDefaultLegacy(fetch);
 
 var name$1 = "gacm";
-var version$1 = "1.2.10";
+var version$1 = "1.2.11";
 var description$1 = "git account manage";
 var author$1 = "alqmc";
 var license$1 = "MIT";
@@ -185,7 +185,7 @@ const execCommand = async (cmd, args) => {
 };
 
 var name = "gacm";
-var version = "1.2.10";
+var version = "1.2.11";
 var description = "gacm";
 var author = "alqmc";
 var license = "MIT";
@@ -549,4 +549,14 @@ program.command("add", "\u6DFB\u52A0\u955C\u50CF").option("-n, --name <name>", "
 program.command("alias <origin> <target>", "\u955C\u50CF\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>", "\u5220\u9664\u955C\u50CF").action(useDelete);
 program.help();
-program.parse(process.argv);
+const init = async () => {
+  try {
+    program.parse(process.argv, { run: false });
+    await program.runMatchedCommand();
+  } catch (error) {
+    console.error(error?.message || "\u672A\u77E5\u9519\u8BEF");
+    program.outputHelp();
+    process.exit(0);
+  }
+};
+init();
