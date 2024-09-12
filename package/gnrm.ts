@@ -34,4 +34,16 @@ program.command('delete <name>', '删除镜像').action(useDelete);
 
 program.help();
 
-program.parse(process.argv);
+const init = async () => {
+  try {
+    program.parse(process.argv, { run: false });
+    await program.runMatchedCommand();
+  }
+  catch (error: any) {
+    console.error(error?.message || '未知错误');
+    program.outputHelp();
+    process.exit(0);
+  }
+};
+
+init();
