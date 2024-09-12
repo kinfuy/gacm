@@ -16,7 +16,7 @@ jobs:
           node-version: 16.x
 
       - name: changelog
-        run: npx changelogithub
+        run: npx changelogithub@0.12
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
