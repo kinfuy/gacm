@@ -23,7 +23,7 @@ var version$1 = "1.2.11";
 var description$1 = "git account manage";
 var author$1 = "kinfuy (https://github.com/kinfuy)";
 var license$1 = "MIT";
-var repository = "https://github.com/kinfuy/vite-plugin-shortcuts";
+var repository = "https://github.com/kinfuy/gacm";
 var keywords = [
 	"git",
 	"account",
@@ -141,7 +141,9 @@ const padding = (message = "", before = 1, after = 1) => {
   return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
 };
 const geneDashLine = (message, length) => {
-  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
+  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join(
+    "-"
+  );
   return padding(kolorist.white(finalMessage));
 };
 const printMessages = (messages) => {
@@ -267,7 +269,9 @@ const insertRegistry = async (name, alias, registry, home) => {
         x.registry = registry;
       }
     });
-    log.success(`[update]:${alias} ${alias !== name ? `(${name})` : ""} registry ${registry}`);
+    log.success(
+      `[update]:${alias} ${alias !== name ? `(${name})` : ""} registry ${registry}`
+    );
   } else {
     userConfig.registry?.push({
       alias,
@@ -275,7 +279,9 @@ const insertRegistry = async (name, alias, registry, home) => {
       home: home || "",
       registry
     });
-    log.success(`[add]:${alias} ${alias !== name ? `(${name})` : ""} registry ${registry}`);
+    log.success(
+      `[add]:${alias} ${alias !== name ? `(${name})` : ""} registry ${registry}`
+    );
   }
   await writeFileUser(registriesPath, userConfig);
 };
@@ -339,9 +345,11 @@ const useLs = async (cmd) => {
       });
     } catch (error) {
     }
-  const length = Math.max(...registryList.map((x) => {
-    return x.alias.length + (x.alias !== x.name ? x.name.length : 0);
-  })) + 3;
+  const length = Math.max(
+    ...registryList.map((x) => {
+      return x.alias.length + (x.alias !== x.name ? x.name.length : 0);
+    })
+  ) + 3;
   const prefix = "";
   const colorMap = {
     npm: kolorist.green,
@@ -421,17 +429,34 @@ const useUse = async (name, cmd) => {
     "registry",
     useRegistry.registry
   ]).then(() => {
-    log.success(`${packageManager} registry has been set to:  ${useRegistry.registry}`);
+    log.success(
+      `${packageManager} registry has been set to:  ${useRegistry.registry}`
+    );
   }).catch(() => {
     log.error(`${packageManager} is not found`);
   });
 };
 
-const useAdd = async (cmd) => {
-  if (cmd.name && cmd.registry) {
-    const alias = cmd.alias || cmd.name;
-    await insertRegistry(cmd.name, alias, cmd.registry);
+const isValidUrl = (url) => {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
   }
+};
+
+const useAdd = async (cmd) => {
+  if (!cmd.name || !cmd.registry) {
+    log.error("name and registry are required");
+    return;
+  }
+  if (!isValidUrl(cmd.registry)) {
+    log.error(`invalid registry URL format: ${cmd.registry}`);
+    return;
+  }
+  const alias = cmd.alias || cmd.name;
+  await insertRegistry(cmd.name, alias, cmd.registry);
 };
 
 const useAlias = async (origin, target) => {
@@ -470,7 +495,9 @@ const useDelete = async (name) => {
     return log.error(`${name} not found`);
   for (let i = 0; i < userConfig.registry.length; i++)
     if (userConfig.registry[i].alias === name) {
-      log.success(`[delete]: ${userConfig.registry[i].alias}  ${userConfig.registry[i].registry}`);
+      log.success(
+        `[delete]: ${userConfig.registry[i].alias}  ${userConfig.registry[i].registry}`
+      );
       userConfig.registry.splice(i, 1);
     }
   await writeFileUser(registriesPath, userConfig);
@@ -511,13 +538,8 @@ const useTest = async (cmd) => {
     }
   };
   if (cmd.all) {
-    const list = registryList.map(async (r) => {
-      return {
-        handle: await test(r)
-      };
-    });
-    for (const iterator of list)
-      await iterator;
+    console.log("\nTesting all registries...\n");
+    await Promise.all(registryList.map((r) => test(r)));
     return;
   }
   if (cmd.registry) {

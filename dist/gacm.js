@@ -56,7 +56,9 @@ const padding = (message = "", before = 1, after = 1) => {
   return new Array(before).fill(" ").join(" ") + message + new Array(after).fill(" ").join(" ");
 };
 const geneDashLine = (message, length) => {
-  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join("-");
+  const finalMessage = new Array(Math.max(2, length - message.length + 2)).join(
+    "-"
+  );
   return padding(kolorist.white(finalMessage));
 };
 const printMessages = (messages) => {
@@ -66,10 +68,10 @@ const printMessages = (messages) => {
   console.log("\n");
 };
 
-const { readFile, writeFile } = fs.promises;
+const { readFile: readFile$1, writeFile: writeFile$1 } = fs.promises;
 const getFileUser = async (rootPath) => {
   if (fs.existsSync(rootPath)) {
-    const fileBuffer = await readFile(rootPath, "utf-8");
+    const fileBuffer = await readFile$1(rootPath, "utf-8");
     let userList = fileBuffer ? JSON.parse(fileBuffer.toString()) : null;
     if (userList && !userList.version)
       userList = transformData(userList);
@@ -78,7 +80,7 @@ const getFileUser = async (rootPath) => {
   return null;
 };
 async function writeFileUser(dir, data) {
-  writeFile(dir, JSON.stringify(data, null, 4)).catch((error) => {
+  writeFile$1(dir, JSON.stringify(data, null, 4)).catch((error) => {
     log.error(error);
     process.exit(0);
   });
@@ -172,7 +174,9 @@ var pkg$1 = {
 };
 
 const isExistAlias = (users, alias, name, email) => {
-  return users.some((x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email);
+  return users.some(
+    (x) => x.alias === alias || !x.alias && x.name === alias || name && email && x.name === name && x.email === email
+  );
 };
 const insertUser = async (name, email, alias = name) => {
   let userConfig = await getFileUser(registriesPath);
@@ -190,7 +194,9 @@ const insertUser = async (name, email, alias = name) => {
         user.alias = alias === name ? user.alias ? user.alias : alias : alias;
         user.email = email;
         user.name = name;
-        log.success(`[update]:${alias} ${user.alias !== name ? `(${user.name})` : ""}`);
+        log.success(
+          `[update]:${alias} ${user.alias !== name ? `(${user.name})` : ""}`
+        );
       }
     });
   } else {
@@ -209,7 +215,7 @@ var version = "1.2.11";
 var description = "git account manage";
 var author = "kinfuy (https://github.com/kinfuy)";
 var license = "MIT";
-var repository = "https://github.com/kinfuy/vite-plugin-shortcuts";
+var repository = "https://github.com/kinfuy/gacm";
 var keywords = [
 	"git",
 	"account",
@@ -249,8 +255,10 @@ const useLs = async () => {
   });
   const currectEmail = await execCommand("git", ["config", "user.email"]).catch(() => {
   });
-  if (userList.users.length === 0 && (!currectUser || !currectEmail))
-    return log.info("no user");
+  if (userList.users.length === 0 && (!currectUser || !currectEmail)) {
+    log.info("No git users found. You can add a user with: gacm add --name <name> --email <email>");
+    return;
+  }
   if (!userList.users.some((x) => x.name === currectUser) && currectUser && currectEmail) {
     await insertUser(currectUser, currectEmail);
     log.info(`[found new user]: ${currectUser}`);
@@ -260,7 +268,11 @@ const useLs = async () => {
       alias: currectUser
     });
   }
-  const length = Math.max(...userList.users.map((user) => user.alias.length + (user.alias !== user.name ? user.name.length : 0))) + 3;
+  const length = Math.max(
+    ...userList.users.map(
+      (user) => user.alias.length + (user.alias !== user.name ? user.name.length : 0)
+    )
+  ) + 3;
   const prefix = "  ";
   const messages = userList.users.map((user) => {
     const currect = user.name === currectUser && user.email === currectEmail ? `${kolorist.green("\u25A0")} ` : "  ";
@@ -274,20 +286,44 @@ const useDelete = async (name) => {
   const userList = await getFileUser(registriesPath);
   if (!userList)
     return log.error("no user");
-  const useUser = userList.users.find((x) => x.alias === name || !x.alias && x.name === name);
+  const useUser = userList.users.find(
+    (x) => x.alias === name || !x.alias && x.name === name
+  );
   if (!useUser)
     return log.error(`${name} not found`);
   for (let i = 0; i < userList.users.length; i++)
     if (!userList.users[i].alias && userList.users[i].name === name || userList.users[i].alias === name) {
-      log.success(`[delete]: ${userList.users[i].alias}${userList.users[i].alias !== userList.users[i].name ? `(${userList.users[i].name})` : ""}`);
+      log.success(
+        `[delete]: ${userList.users[i].alias}${userList.users[i].alias !== userList.users[i].name ? `(${userList.users[i].name})` : ""}`
+      );
       userList.users.splice(i, 1);
     }
   await writeFileUser(registriesPath, userList);
 };
 
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+const isValidUsername = (name) => {
+  const nameRegex = /^[a-zA-Z0-9\s._-]+$/;
+  return nameRegex.test(name) && name.trim().length > 0;
+};
+
 const useAdd = async (cmd) => {
-  if (cmd.name && cmd.email)
-    await insertUser(cmd.name, cmd.email, cmd.alias);
+  if (!cmd.name || !cmd.email) {
+    log.error("name and email are required");
+    return;
+  }
+  if (!isValidUsername(cmd.name)) {
+    log.error(`invalid username format: ${cmd.name}`);
+    return;
+  }
+  if (!isValidEmail(cmd.email)) {
+    log.error(`invalid email format: ${cmd.email}`);
+    return;
+  }
+  await insertUser(cmd.name, cmd.email, cmd.alias);
 };
 
 const useAlias = async (origin, target) => {
@@ -349,7 +385,68 @@ const useUse = async (name, cmd) => {
     env = "local";
   await run(`git config --${env} user.name ${useUser.name}`);
   await run(`git config --${env} user.email ${useUser.email}`);
-  log.success(`git user changed [${env}]:${useUser.alias}${useUser.alias !== useUser.name ? `(${useUser.name})` : ""}`);
+  log.success(
+    `git user changed [${env}]:${useUser.alias}${useUser.alias !== useUser.name ? `(${useUser.name})` : ""}`
+  );
+};
+
+const { writeFile } = fs.promises;
+const useExport = async (cmd) => {
+  const userConfig = await getFileUser(registriesPath);
+  if (!userConfig) {
+    log.error("No configuration found to export");
+    return;
+  }
+  const outputPath = cmd.output || "./gacm-config.json";
+  try {
+    await writeFile(outputPath, JSON.stringify(userConfig, null, 2));
+    log.success(`Configuration exported to: ${outputPath}`);
+  } catch (error) {
+    log.error(`Failed to export configuration: ${error.message}`);
+  }
+};
+
+const { readFile } = fs.promises;
+const useImport = async (cmd) => {
+  if (!cmd.file) {
+    log.error("Please specify a file to import with --file <path>");
+    return;
+  }
+  if (!fs.existsSync(cmd.file)) {
+    log.error(`File not found: ${cmd.file}`);
+    return;
+  }
+  try {
+    const fileContent = await readFile(cmd.file, "utf-8");
+    const importedConfig = JSON.parse(fileContent);
+    if (!importedConfig.version || !Array.isArray(importedConfig.users)) {
+      log.error("Invalid configuration format");
+      return;
+    }
+    if (cmd.merge) {
+      const existingConfig = await readFile(registriesPath, "utf-8").catch(() => null);
+      if (existingConfig) {
+        const existing = JSON.parse(existingConfig);
+        const userMap = /* @__PURE__ */ new Map();
+        [...existing.users, ...importedConfig.users].forEach((user) => {
+          const key = `${user.name}:${user.email}`;
+          userMap.set(key, user);
+        });
+        importedConfig.users = Array.from(userMap.values());
+        if (existing.registry && importedConfig.registry) {
+          const registryMap = /* @__PURE__ */ new Map();
+          [...existing.registry, ...importedConfig.registry].forEach((reg) => {
+            registryMap.set(reg.alias, reg);
+          });
+          importedConfig.registry = Array.from(registryMap.values());
+        }
+      }
+    }
+    await writeFileUser(registriesPath, importedConfig);
+    log.success(`Configuration imported from: ${cmd.file}`);
+  } catch (error) {
+    log.error(`Failed to import configuration: ${error.message}`);
+  }
 };
 
 const useVersion = () => {
@@ -363,6 +460,8 @@ program.command("use [name]", "\u5207\u6362\u7528\u6237").option("-l, --local", 
 program.command("add", "\u6DFB\u52A0\u7528\u6237").option("-n, --name <name>", "\u7528\u6237\u540D\u79F0").option("-e, --email <email>", "\u7528\u6237\u90AE\u7BB1").option("-a, --alias <alias>", "\u7528\u6237\u522B\u540D").action(useAdd);
 program.command("alias <origin> <target>", "\u6DFB\u52A0\u522B\u540D").action(useAlias);
 program.command("delete <name>", "\u5220\u9664\u7528\u6237").action(useDelete);
+program.command("export", "\u5BFC\u51FA\u914D\u7F6E").option("-o, --output <path>", "\u8F93\u51FA\u6587\u4EF6\u8DEF\u5F84").action(useExport);
+program.command("import", "\u5BFC\u5165\u914D\u7F6E").option("-f, --file <path>", "\u5BFC\u5165\u6587\u4EF6\u8DEF\u5F84").option("-m, --merge", "\u5408\u5E76\u6A21\u5F0F").action(useImport);
 program.help();
 const init = async () => {
   try {

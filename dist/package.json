@@ -5,7 +5,7 @@
   "description": "git account manage",
   "author": "kinfuy (https://github.com/kinfuy)",
   "license": "MIT",
-  "repository": "https://github.com/kinfuy/vite-plugin-shortcuts",
+  "repository": "https://github.com/kinfuy/gacm",
   "keywords": [
     "git",
     "account",
