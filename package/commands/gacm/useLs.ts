@@ -15,8 +15,10 @@ export const useLs = async () => {
 
   const currectEmail = await execCommand('git', ['config', 'user.email']).catch(() => {});
 
-  if (userList.users.length === 0 && (!currectUser || !currectEmail))
-    return log.info('no user');
+  if (userList.users.length === 0 && (!currectUser || !currectEmail)) {
+    log.info('No git users found. You can add a user with: gacm add --name <name> --email <email>');
+    return;
+  }
 
   if (
     !userList.users.some(x => x.name === currectUser)

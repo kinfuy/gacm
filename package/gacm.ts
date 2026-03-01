@@ -1,5 +1,5 @@
 import cac from 'cac';
-import { useAdd, useAlias, useDelete, useLs, useUse } from './commands/gacm';
+import { useAdd, useAlias, useDelete, useExport, useImport, useLs, useUse } from './commands/gacm';
 import { useVersion } from './commands/common/useVersion';
 
 const program = cac('gacm');
@@ -25,6 +25,17 @@ program
 program.command('alias <origin> <target>', '添加别名').action(useAlias);
 
 program.command('delete <name>', '删除用户').action(useDelete);
+
+program
+  .command('export', '导出配置')
+  .option('-o, --output <path>', '输出文件路径')
+  .action(useExport);
+
+program
+  .command('import', '导入配置')
+  .option('-f, --file <path>', '导入文件路径')
+  .option('-m, --merge', '合并模式')
+  .action(useImport);
 
 program.help();
 

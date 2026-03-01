@@ -44,14 +44,10 @@ export const useTest = async (cmd: TestCmd) => {
   };
 
   if (cmd.all) {
-    const list = registryList.map(async (r) => {
-      return {
-        handle: await test(r)
-      };
-    });
-    for (const iterator of list)
-      await iterator;
-
+    // eslint-disable-next-line no-console
+    console.log('\nTesting all registries...\n');
+    // 并发测试所有 registry
+    await Promise.all(registryList.map(r => test(r)));
     return;
   }
 
